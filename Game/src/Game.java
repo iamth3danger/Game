@@ -1,6 +1,8 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +13,32 @@ public class Game {
     private Player player;
     private Platform[] platforms;
     private Physics physics;
+    private List<Platform> plats = new ArrayList<Platform>();
+    private List<Entity> entities = new ArrayList<Entity>();
     
     public Game() {
-        screen = new Screen();
+    	this.player = new Player(100, 100, 48, 60);
+    	entities.add(player);
+        // Create a 2D array of strings
+        String[][] level = TextConverter.convertTextFileToArray("Levels/level.txt");
+
+    
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 125; j++) {
+                if (level[i][j].equals("#")) {
+                    int x = j * 32;
+                    int y = i * 32;
+                   entities.add( new Platform(x, y, 32, 32));
+                    plats.add(new Platform(x, y, 32, 32));
+                }
+            }
+        }
+        
+        screen = new Screen(this);
+        physics = new Physics(entities);
         screen.background();
         frame = screen.getFrame();
-        physics = screen.getPhysics();
+        
     }
 
     public void run() {
@@ -47,6 +69,14 @@ public class Game {
         }
     }
 
+    public Physics getPhysics() {
+        return physics;
+    }
+    
+    public List<Entity> getEntities() {
+		return new ArrayList<Entity>(entities);
+	}
+    
     public void render() {
         Graphics g = frame.getGraphics();
         screen.drawImage(g);

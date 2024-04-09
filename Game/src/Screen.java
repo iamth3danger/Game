@@ -2,45 +2,36 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.*;
+import java.util.List;
 
 public class Screen {
     private JFrame frame;
     private Player player;
-    private Platform[] platforms;
+    //private Platform[] platforms;
     private Physics physics;
+    private Platform[][] platforms;
+    private List<Platform> plats = new ArrayList<Platform>();
+    private List<Entity> entities = new ArrayList<Entity>();
     
-    public Screen() {
+    public Screen(Game game) {
+    	this.entities = new ArrayList<Entity>(game.getEntities());
+    	if (this.entities == null) throw new NullPointerException("here");
+    	this.player = (Player) this.entities.get(0);
         frame = new JFrame("Color Screen");
-        frame.setSize(800, 600);
+        frame.setSize(800, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.player = new Player(100, 100, 48, 60);
-
-        // Create a line of platforms across the bottom of the screen
-        int platformWidth = 32;
-        int platformHeight = 32;
-        int numPlatforms = frame.getWidth() / platformWidth;
-        platforms = new Platform[numPlatforms];
-        for (int i = 0; i < numPlatforms; i++) {
-            int x = i * platformWidth;
-            int y = frame.getHeight() - 3 * platformHeight;
-            platforms[i] = new Platform(x, y, platformWidth, platformHeight);
-        }
-        
-        physics = new Physics(player, platforms);
+   
 
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                physics.keyPressed(e);
+                game.getPhysics().keyPressed(e);
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                physics.keyReleased(e);
+                game.getPhysics().keyReleased(e);
             }
         });
 
@@ -55,29 +46,37 @@ public class Screen {
         frame.add(panel);
     }
 
-    public Physics getPhysics() {
-        return physics;
-    }
 
+  
+    
     public void drawImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
 
-        if (player.getImage() != null) {
-            TexturePaint texturePaint = new TexturePaint(player.getImage(), new Rectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight()));
-            g2d.setPaint(texturePaint);
-            g2d.fillRect(player.getX(), player.getY(), player.getImage().getWidth(), player.getImage().getHeight());
+        // Calculate the offset to keep the player in the center of the screen
+        int offsetX = (frame.getWidth() - player.getWidth()) / 2 - player.getX();
+        int offsetY = (frame.getHeight() - player.getHeight()) / 2 - player.getY();
+
+        // Ensure that the screen stops moving in the Y direction when the player's y position plus the distance to the bottom of the screen is greater than 640
+        int maxYOffset = 0 - player.getY() - player.getHeight();
+        if (offsetY > maxYOffset) {
+            offsetY = maxYOffset;
         }
+
+        // Translate the graphics context
+        g2d.translate(offsetX, -32);
 
         // Draw the platforms
-        for (Platform platform : platforms) {
-            if (platform.getImage() != null) {
-                TexturePaint texturePaint = new TexturePaint(platform.getImage(), new Rectangle(platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight()));
+       
+        for (Entity entity : entities) {
+            if (entity.getImage() != null) {
+                TexturePaint texturePaint = new TexturePaint(entity.getImage(), new Rectangle(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight()));
                 g2d.setPaint(texturePaint);
-                g2d.fillRect(platform.getX(), platform.getY(), platform.getImage().getWidth(), platform.getImage().getHeight());
+                g2d.fillRect(entity.getX(), entity.getY(), entity.getImage().getWidth(), entity.getImage().getHeight());
             }
         }
-    }
 
+    }
+    
     public void background() {
         frame.setVisible(true);
     }

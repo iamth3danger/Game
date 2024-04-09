@@ -9,7 +9,8 @@ public abstract class Entity {
     private int width;
     private int height;
     private BufferedImage image;
-    private int index = 1;
+    private int indexRun = 1;
+    private int indexIdle = 1;
     private int velocityX = 0;
     private int velocityY = 0;
     private final String file = "Idle1.png";
@@ -96,19 +97,23 @@ public abstract class Entity {
     }
 
     public void imageChecker() {
+    	
         if (getVelocityX() == 0) {
-            loadImage(fileIdle);
-        } else if (getVelocityX() > 0){
-        	String file = "Sprites/Run/Run" + index + ".png";
+        	String file = "Sprites/Idle/Idle" + indexIdle + ".png";
             loadImage(file);
-            index++;
-            if (index == 9) index = 1;
+            indexIdle++;
+            if (indexIdle == 11) indexIdle = 1;
+        } else if (getVelocityX() > 0){
+        	String file = "Sprites/Run/Run" + indexRun + ".png";
+            loadImage(file);
+            indexRun++;
+            if (indexRun == 9) indexRun = 1;
         }
         else {
-        	String file = "Sprites/Run/Run" + index + "Flipped.png";
+        	String file = "Sprites/Run/Run" + indexRun + "Flipped.png";
             loadImage(file);
-            index++;
-            if (index == 9) index = 1;
+            indexRun++;
+            if (indexRun == 9) indexRun = 1;
         }
     }
 

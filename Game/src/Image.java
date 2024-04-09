@@ -18,10 +18,10 @@ public class Image {
     public static void main(String[] args) {
         try {
             Image image = new Image();
-            for (int i = 1; i < 9; i++) {
-            BufferedImage originalImage = ImageIO.read(new File("Sprites/Run/Run" + i + ".png"));
+            for (int i = 1; i < 4; i++) {
+            BufferedImage originalImage = ImageIO.read(new File("Sprites/Jump/Jump" + i + ".png"));
             BufferedImage flippedImage = image.imgFlipper(originalImage);
-            ImageIO.write(flippedImage, "png", new File("Sprites/Run/Run" + i + "Flipped.png"));
+            ImageIO.write(flippedImage, "png", new File("Sprites/Jump/Jump" + i + "Flipped.png"));
             System.out.println("flipped");
             }
         } catch (IOException e) {

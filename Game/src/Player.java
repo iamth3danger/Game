@@ -30,5 +30,33 @@ public class Player extends Entity {
         Rectangle otherRect = new Rectangle(other.getX(), other.getY(), other.getWidth(), other.getHeight());
         return playerRect.intersects(otherRect);
     }
+      
+    
+    public boolean isOnTopOf(Entity other) {
+        Rectangle playerRect = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        Rectangle otherRect = new Rectangle(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+        return playerRect.getY() + playerRect.getHeight() >= otherRect.getY() &&
+        		playerRect.getX() + playerRect.getWidth() >= otherRect.getX() && playerRect.getX() <= otherRect.getX() + otherRect.getWidth() &&
+               playerRect.intersects(otherRect);
+    }
+
+    public boolean isRightOf(Entity other) {
+        Rectangle playerRect = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        Rectangle otherRect = new Rectangle(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+        return playerRect.getX() >= otherRect.getX() + otherRect.getWidth() && playerRect.intersects(otherRect);
+    }
+
+    public boolean isLeftOf(Entity other) {
+        Rectangle playerRect = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        Rectangle otherRect = new Rectangle(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+        return playerRect.getX() + playerRect.getWidth() <= otherRect.getX() && playerRect.intersects(otherRect);
+    }
+
+    public boolean isUnder(Entity other) {
+        Rectangle playerRect = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        Rectangle otherRect = new Rectangle(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+        return playerRect.getY() >= otherRect.getY() + otherRect.getHeight() && playerRect.intersects(otherRect);
+    }
+    
     
 }
