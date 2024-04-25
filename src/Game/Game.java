@@ -49,7 +49,8 @@ public class Game {
     
         // Create a 2D array of strings
     	String[][] level = TextConverter.convertTextFileToArray("level.txt");
-
+    	String[][] level2 = TextConverter.convertTextFileToArray("level.txt");
+    	
     	for (int i = 0; i < level.length; i++) {
     	    for (int j = 0; j < level[i].length; j++) {
     	        if (!level[i][j].equals("-")) {
