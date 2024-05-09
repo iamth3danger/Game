@@ -6,9 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-<<<<<<< HEAD
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-=======
->>>>>>> branch 'master' of https://github.com/iamth3danger/Game.git
 	<classpathentry kind="output" path="bin"/>
 </classpath>
