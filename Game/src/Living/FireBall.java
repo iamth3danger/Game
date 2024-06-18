@@ -8,6 +8,9 @@ public class FireBall extends Living {
     private int initialX;
     private int initialY;
     private long createTime;
+    private double angleDiff = .05;
+    private int radius = 50;
+    public boolean extinguish = false;
     
     public FireBall(int x, int y) {
         super(x, y);
@@ -43,17 +46,17 @@ public class FireBall extends Living {
     }
     
 
-    public void rotate() {
-        int radius = 50;
+    public void update() {
         double newX = centerX + radius * Math.cos(angle);
         double newY = centerY + radius * Math.sin(angle);
 
-      
-        
         setX((int) newX);
         setY((int) newY);
-
-        angle += 0.05; // adjust this value to control the speed of rotation
+    }
+    
+    
+    public void rotate() {
+        angle += angleDiff; // adjust this value to control the speed of rotation
 
         if (angle > 2 * Math.PI) {
             angle = 0;
@@ -62,18 +65,9 @@ public class FireBall extends Living {
     }
     
     
+    
     public void moveAwayFromCenter() {
-        int dx = getX() - centerX;
-        int dy = getY() - centerY;
-        double distance = Math.sqrt(dx * dx + dy * dy);
-        double directionX = dx / distance;
-        double directionY = dy / distance;
-
-        int newX = getX() + (int) (directionX * 2); // move 10 pixels in the x direction
-        int newY = getY() + (int) (directionY * 2); // move 10 pixels in the y direction
-
-        setX(newX);
-        setY(newY);
+        radius += 5;
     }
     
     public static void findCenters(FireBall[] fireballs) {
@@ -116,5 +110,13 @@ public class FireBall extends Living {
 	public String getAnimationFile() {
 		// TODO Auto-generated method stub
 		return animationFile;
+	}
+	
+	public void extinguish() {
+		extinguish = true;
+	}
+	
+	public boolean isExinguished() {
+		return extinguish;
 	}
 }

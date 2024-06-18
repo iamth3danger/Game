@@ -1,34 +1,28 @@
 package Game;
 
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.*;
 
 import Boss.FireBallListener;
 import Boss.Mage;
-import Creature.*;
-
+import Creature.Creature;
+import Creature.Reaper;
 import Entity.Entity;
 import Entity.EntityFactory;
 import ImageHandler.TextConverter;
 import Living.FireBall;
-import Living.FlameBall;
 import Living.Living;
 import Player.Physics;
 import Player.Player;
 import Screen.Screen;
 import Tile.Moving;
 import Tile.Platform;
-import Tile.RedTile;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class Game implements FireBallListener {
     private Screen screen;
@@ -39,6 +33,7 @@ public class Game implements FireBallListener {
     private List<Platform> plats = new ArrayList<Platform>();
     private List<Entity> entities = new CopyOnWriteArrayList<Entity>();
     private List<Creature> creatures = new ArrayList<Creature>();
+    private List<Living> living = new ArrayList<Living>();
     private List<Moving> moves = new ArrayList<Moving>();
     private List<Creature> creaturesToAdd = new ArrayList<Creature>();
     private boolean running = true;
@@ -137,7 +132,7 @@ public class Game implements FireBallListener {
             //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
             while (delta >= 1) {
                 physics.update();
-                mage.rotateFireballs();
+                mage.update();
                 
                 //flame.update();
                 updateEntities();
@@ -155,6 +150,17 @@ public class Game implements FireBallListener {
                     
                 }
                 
+                for (Iterator<Living> iterator = living.iterator(); iterator.hasNext();) {
+                	Living living = iterator.next();
+                	if (living instanceof FireBall) {
+                		FireBall fire = (FireBall) living;
+                		if (fire.isExinguished()) {
+                			entities.remove(fire);
+ 
+                			iterator.remove();
+                		}
+                	}
+                }
                 // Add the new creatures to the main list
                 //creatures.addAll(creaturesToAdd);
 
@@ -282,6 +288,7 @@ public class Game implements FireBallListener {
     @Override
     public void onFireBallCreated(FireBall fireBall) {
         entities.add(fireBall);
+        living.add(fireBall);
     }
     
     

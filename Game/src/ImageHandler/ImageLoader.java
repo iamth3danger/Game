@@ -17,7 +17,10 @@ public class ImageLoader {
         while (file.exists()) {
             images.add(loadImage(fileName));
             i++;
-            fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_" + fileSplit[1];
+            if (i < 10)
+            	fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_" + fileSplit[1];
+            else
+            	fileName = fileSplit[0].substring(0, fileSplit[0].length() - 2) + i + "_" + fileSplit[1];
             file = new File(fileName);
         }
         return images;
@@ -42,7 +45,11 @@ public class ImageLoader {
         while (file.exists()) {
         	images.add(loadImage(fileName));
         	i++;
-        	fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_flipped_" + fileSplit[1];
+        	if (i < 10)
+        		fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_flipped_" + fileSplit[1];
+        	else 
+        		fileName = fileSplit[0].substring(0, fileSplit[0].length() - 2) + i + "_flipped_" + fileSplit[1];
+        	
         	file = new File(fileName);
         }
         

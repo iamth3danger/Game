@@ -15,9 +15,8 @@ public class Mage extends Entity {
     private Animation animation;
     private Timer timer;
     private FireBallListener listener;
-    private boolean isOver = false;
     private long createTime;
-    private FireBall[] fireballs;
+    private FireBallAnimation fireballAnimation;
 
     public Mage(int x, int y, FireBallListener listener) {
         super(x, y);
@@ -25,54 +24,21 @@ public class Mage extends Entity {
         this.animationFile = "Boss/Mage/Stage1/mageStage1/00_mageStage1.png";
         setWidth(40);
         setHeight(40);
+        this.fireballAnimation = new FireBallAnimation(this, listener);
         init();
         
         //animate();
 
-        fireballs = new FireBall[8];
-        for (int i = 0; i < 8; i++) {
-            double angle = Math.PI / 4 * i;
-            int fireballX = (int) (getX() + (getWidth() / 2) + 50 * Math.cos(angle));
-            int fireballY = (int) (getY() + (getHeight() / 2) + 50 * Math.sin(angle));
-            fireballs[i] = new FireBall(fireballX, fireballY);
-            listener.onFireBallCreated(fireballs[i]);
-        }
-        FireBall.findCenters(fireballs);
-        for (FireBall fire : fireballs)
-            fire.initAngle();
+        createTime = System.currentTimeMillis();
     }
 
-    public void rotateFireballs() {
-        for (FireBall fireball : fireballs) {
-            fireball.rotate();
-            if (System.currentTimeMillis() - fireball.getCreateTime() > 5000) {
-                fireball.setVelocityX(0);
-                fireball.setVelocityY(0);
-            }
-        }
-    }
-
+   
     private void init() {
         this.animation = new Animation(ImageLoader.loadImages(getAnimationFile()), 100, true, null);
     }
 
     public void update() {
-        setX(getX() + getVelocityX());
-
-        if (isOver) {
-            setY(getY() + (getVelocityY() * getVelocityY()));
-        } else {
-            setY(getY() - (getVelocityY() * getVelocityY()));
-        }
-
-        if (getY() < 300) {
-            isOver = true;
-        }
-
-        if (getY() > 450) {
-            setY(450);
-            isOver = false;
-        }
+    	fireballAnimation.animation();	   	
     }
     
     
@@ -98,18 +64,13 @@ public class Mage extends Entity {
 		return animationFile;
 	}
 	
+	public long getTime() {
+		return createTime;
+	}
 	
-	public void animate() {
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // Create a new FireBall here
-                FireBall fireBall = new FireBall(getX() + getWidth(), getY());
-                fireBall.setVelocityX(2);
-                listener.onFireBallCreated(fireBall);
-            }
-        }, 0, 1000); // 2000 milliseconds = 2 seconds
-    }
+	public void updateTime() {
+		createTime = System.currentTimeMillis();
+	}
+
 	
 }
