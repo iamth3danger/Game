@@ -2,6 +2,7 @@ package Game;
 
 
 import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,21 +11,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 
 import Boss.FireBallListener;
-import Boss.Mage;
+import Boss.*;
 import Creature.Creature;
 import Creature.Reaper;
+import DataStructures.Grid;
 import Entity.Entity;
 import Entity.EntityFactory;
 import ImageHandler.TextConverter;
 import Living.FireBall;
 import Living.Living;
+import Living.Shadow;
 import Player.Physics;
 import Player.Player;
 import Screen.Screen;
 import Tile.Moving;
 import Tile.Platform;
 
-public class Game implements FireBallListener {
+public class Game implements AttackListener {
     private Screen screen;
     private JFrame frame;
     public Player player;
@@ -40,8 +43,11 @@ public class Game implements FireBallListener {
     private FireBall flame;
     private Thread gameThread;
     private FireBall[] fireballs = new FireBall[8];
+    private Grid grid;
+    private Shadow shadow;
     
     public Game(){
+    	
     	this.player = new Player(100, 100);
     	//this.atttk = new ReaperAttack(400, 400);
     	entities.add(player);
@@ -62,6 +68,7 @@ public class Game implements FireBallListener {
     	this.mage = new Mage(100, 370, this);
     	mage.setVelocity(1, 2);
     	entities.add(mage);
+    	
     	//this.flame = new FireBall(mage.getX() + mage.getWidth(), mage.getY());
     	//this.flame = new FireBall(100, 400);
     	//flame.setVelocity(1, 1);
@@ -109,10 +116,10 @@ public class Game implements FireBallListener {
     	}
     	
         screen = new Screen(this);
+       
         physics = new Physics(entities);
         screen.background();
         frame = screen.getFrame();
-        
     }
 
     public void run() {
@@ -152,14 +159,10 @@ public class Game implements FireBallListener {
                 
                 for (Iterator<Living> iterator = living.iterator(); iterator.hasNext();) {
                 	Living living = iterator.next();
-                	if (living instanceof FireBall) {
-                		FireBall fire = (FireBall) living;
-                		if (fire.isExinguished()) {
-                			entities.remove(fire);
- 
+                		if (living.isBanished()) {
+                			entities.remove(living);
                 			iterator.remove();
-                		}
-                	}
+                  	}
                 }
                 // Add the new creatures to the main list
                 //creatures.addAll(creaturesToAdd);
@@ -168,13 +171,7 @@ public class Game implements FireBallListener {
                     move.animate();
                 }
                 
-                for (Entity entity : entities) {
-                	if (entity instanceof Living) {
-
-            	        Living live = (Living) entity;
-            	        live.update(); // Assuming you have an update method in FireBall class
-                	}
-                }
+              
                 delta--;
             }
 
@@ -291,6 +288,11 @@ public class Game implements FireBallListener {
         living.add(fireBall);
     }
     
+    @Override
+    public void onShadowCreated(Shadow shadow) {
+    	entities.add(shadow);
+    	living.add(shadow);
+    }
     
     public static void main(String[] args) {
         Game game = new Game();

@@ -40,6 +40,18 @@ public class Animation {
         return !isLooping && currentIndex >= images.size() - 1;
     }
     
+    public boolean atLastIndex() {
+    	return currentIndex >= images.size() - 1;
+    }
+    
+    public int getCurrentIndex() {
+    	return currentIndex;
+    }
+    
+    public int getSize() {
+    	return images.size();
+    }
+    
     public void reset() {
         currentIndex = 0;
         lastTime = System.currentTimeMillis();

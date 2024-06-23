@@ -16,6 +16,54 @@ public class Image {
         return flippedImage;
     }
 
+    public static void ImageCopier2(String filename, int imgToCopy, int copies, int imgNumber) throws IOException {
+
+        // split the input file name into parts
+         String[] fileSplit = filename.split("_");
+
+         /*
+         for (int i = imgToCopy; i < imgToCopy + copies; i++) {
+             int splitter;
+  
+              //check whether number is single digit or double digit
+             if (i < 10) {
+                 splitter = fileSplit[0].length() - 1;
+             } else {
+                 splitter = fileSplit[0].length() - 2;
+             }
+  
+           // construct new file name
+             String newFileName = fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1];
+  
+            //read the original image
+             BufferedImage originalImage = ImageIO.read(new File(filename));
+  
+            // write the image to a new file
+             ImageIO.write(originalImage, "png", new File(newFileName));
+         }
+*/
+       // shift the files which are greater than imgNumber
+         for (int i = imgToCopy; i <= imgNumber; i++) {
+             int splitter;
+             if (i < 10) {
+            	 splitter = fileSplit[0].length() - 1;
+             } else {
+            	 splitter = fileSplit[0].length() - 2;
+             }
+  
+             String oldFileName = fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1];
+             File oldFile = new File(oldFileName);
+             System.out.println(oldFileName);
+             if (oldFile.exists()) {
+                 String newFileName = fileSplit[0].substring(0, splitter) + (i + copies) + "_" + fileSplit[1];
+                 File newFile = new File(newFileName);
+                 oldFile.renameTo(newFile);
+             }
+         }
+     }
+ 
+    
+    
     public static void ImageCopier(String filename, int imgToCopy, int copies, int imgNumber) throws IOException{
     	String[] fileSplit = filename.split("_");
         String fileName = "";
@@ -28,11 +76,19 @@ public class Image {
     			splitter = fileSplit[0].length() - 2;
     		
     		
-    		fileName = fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1];
-    		BufferedImage originalImage = ImageIO.read(new File(fileName));
-    		fileName = fileSplit[0].substring(0, splitter) + (i + copies) + "_" + fileSplit[1];
-    		ImageIO.write(originalImage, "png", new File(fileName));
+    		File oldFile = new File(fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1]);
+    		
+    		if (i + copies < 10) {
+    			splitter = fileSplit[0].length() - 1;
+    		}
+    		else 
+    			splitter = fileSplit[0].length() - 2;
+    		
+    		File newFile = new File(fileSplit[0].substring(0, splitter) + (i + copies) + "_" + fileSplit[1]);
+    		oldFile.renameTo(newFile);
     	}
+    	
+    	
     	
     	int splitter;
 		if (imgToCopy < 10) {
@@ -42,17 +98,21 @@ public class Image {
 			splitter = fileSplit[0].length() - 2;
 		
     	String copyFile = fileSplit[0].substring(0, splitter) + imgToCopy + "_" + fileSplit[1];
-    	BufferedImage image = ImageIO.read(new File(fileName));
+    	
+    	BufferedImage image = ImageIO.read(new File(copyFile));
     	
     	for (int i = 1; i <= copies; i++) {
-    		if (i < 10) {
+    		if (i + imgToCopy < 10) {
     			splitter = fileSplit[0].length() - 1;
     		}
     		else 
     			splitter = fileSplit[0].length() - 2;
+    		
     		copyFile = fileSplit[0].substring(0, splitter) + (i + imgToCopy) + "_" + fileSplit[1];
+    		System.out.println(copyFile);
     		ImageIO.write(image, "png", new File(copyFile));
     	}
+    
     }
     public static void main(String[] args) throws IOException {
     	

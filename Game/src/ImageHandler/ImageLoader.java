@@ -17,6 +17,7 @@ public class ImageLoader {
         while (file.exists()) {
             images.add(loadImage(fileName));
             i++;
+            
             if (i < 10)
             	fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_" + fileSplit[1];
             else

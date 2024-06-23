@@ -135,7 +135,13 @@ public class Screen {
         this.entities = entities;
     }
     
+    public int getWidth() {
+    	return frame.getWidth();
+    }
     
+    public int getHeight() {
+    	return frame.getHeight();
+    }
     
     public void drawImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();

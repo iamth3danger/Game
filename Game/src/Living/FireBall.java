@@ -113,10 +113,8 @@ public class FireBall extends Living {
 	}
 	
 	public void extinguish() {
-		extinguish = true;
+		banish(true);
 	}
 	
-	public boolean isExinguished() {
-		return extinguish;
-	}
+	
 }

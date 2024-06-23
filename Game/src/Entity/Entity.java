@@ -153,6 +153,11 @@ public abstract class Entity {
         }
     }
   
+    protected void moveEntity() {
+    	setX(getX() + getVelocityX());
+    	setY(getY() + getVelocityY());
+    }
+    
     public abstract String textSymbol();
     
     public abstract String getFile();

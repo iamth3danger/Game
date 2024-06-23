@@ -5,6 +5,7 @@ import java.util.*;
 import Creature.Creature;
 import Creature.Mushroom;
 import Creature.Reaper;
+import DataStructures.Grid;
 import Entity.Entity;
 import Tile.GreenTile;
 import Tile.Platform;
@@ -23,6 +24,7 @@ public class Physics {
     private boolean isOnSomething = false;
     private int upKeyPressed = 0;
     private boolean gameOver = false;
+    private Grid grid;
     
     public Physics(Player player, Platform[] platforms) {
         this.player = player;
@@ -41,6 +43,11 @@ public class Physics {
     public Physics(List<Entity> entities) {
     	this.entities = new ArrayList<Entity>(entities);
         this.player = (Player) this.entities.get(0);
+    }
+    
+    public Physics(Grid grid, Player player) {
+    	this.grid = grid;
+        this.player = (Player) player;
     }
     
     public Physics(Physics physics) {
@@ -67,7 +74,7 @@ public class Physics {
 	            player.moveRight();
 	            break;
 	        case KeyEvent.VK_DOWN:
-	        	System.out.println(player.getY());
+	        	System.out.println(player.getX() + " " + player.getY());
 	        	break;
 	        case KeyEvent.VK_C:
 	            player.attack();
