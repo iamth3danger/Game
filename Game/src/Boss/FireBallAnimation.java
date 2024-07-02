@@ -98,7 +98,7 @@ public class FireBallAnimation extends Attack{
 		            int fireballX = (int) (getMage().getX() + (getMage().getWidth() / 2) + 50 * Math.cos(angle));
 		            int fireballY = (int) (getMage().getY() + (getMage().getHeight() / 2) + 50 * Math.sin(angle));
 		            fireballs[i] = new FireBall(fireballX, fireballY);
-		            getListener().onFireBallCreated(fireballs[i]);
+		            getListener().onLivingCreated(fireballs[i]);
 		        }
 		        FireBall.findCenters(fireballs);
 		        for (FireBall fire : fireballs)

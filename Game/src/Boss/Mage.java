@@ -19,9 +19,10 @@ public class Mage extends Entity {
     private boolean shadowMade = false;
     private ShadowAttack shadowAttack;
     private AttackType currentAttack;
-    private AttackType[] attackList = {AttackType.FIREBALL, AttackType.SHADOW};
+    private AttackType[] attackList = {AttackType.FIREBALL, AttackType.SHADOW, AttackType.LIGHTNING};
     private int attackCounter = 0;
     private Attack attack;
+    private Lightning lightning;
     
     public Mage(int x, int y, AttackListener listener) {
         super(x, y);
@@ -31,9 +32,11 @@ public class Mage extends Entity {
         setHeight(40);
         init();
         //animate();
-        currentAttack = AttackType.FIREBALL;
+        currentAttack = AttackType.SHADOW;
         attack = AttackFactory.createAttack(currentAttack, this);
         createTime = System.currentTimeMillis();
+       // this.lightning = new Lightning(200, 500);
+        //listener.onLivingCreated(lightning);
     }
 
    
@@ -46,6 +49,7 @@ public class Mage extends Entity {
 
     public void update() {
     	attack.animation();
+
     	if (attack.isCompleted()) {
     		attackCounter++;
     		currentAttack = attackList[attackCounter % attackList.length];

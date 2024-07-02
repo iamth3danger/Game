@@ -1,8 +1,11 @@
 package ImageHandler;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+
 import javax.imageio.ImageIO;
 
 public class Image {
@@ -16,57 +19,120 @@ public class Image {
         return flippedImage;
     }
 
-    public static void ImageCopier2(String filename, int imgToCopy, int copies, int imgNumber) throws IOException {
+   public static void ImageRenamer(String filename, String newFileName) {
+	   String[] oldFileSplit = filename.split("\\d");
+	   String[] newFileSplit = newFileName.split("_");
+	   
+	   File oldFile = new File(filename);
+	   File newFile = new File(newFileName);
+	 
+	   int i = 0;
 
-        // split the input file name into parts
-         String[] fileSplit = filename.split("_");
-
-         /*
-         for (int i = imgToCopy; i < imgToCopy + copies; i++) {
-             int splitter;
-  
-              //check whether number is single digit or double digit
-             if (i < 10) {
-                 splitter = fileSplit[0].length() - 1;
-             } else {
-                 splitter = fileSplit[0].length() - 2;
-             }
-  
-           // construct new file name
-             String newFileName = fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1];
-  
-            //read the original image
-             BufferedImage originalImage = ImageIO.read(new File(filename));
-  
-            // write the image to a new file
-             ImageIO.write(originalImage, "png", new File(newFileName));
-         }
-*/
-       // shift the files which are greater than imgNumber
-         for (int i = imgToCopy; i <= imgNumber; i++) {
-             int splitter;
-             if (i < 10) {
-            	 splitter = fileSplit[0].length() - 1;
-             } else {
-            	 splitter = fileSplit[0].length() - 2;
-             }
-  
-             String oldFileName = fileSplit[0].substring(0, splitter) + i + "_" + fileSplit[1];
-             File oldFile = new File(oldFileName);
-             System.out.println(oldFileName);
-             if (oldFile.exists()) {
-                 String newFileName = fileSplit[0].substring(0, splitter) + (i + copies) + "_" + fileSplit[1];
-                 File newFile = new File(newFileName);
-                 oldFile.renameTo(newFile);
-             }
-         }
-     }
+	   while(oldFile.exists()) {
+		   oldFile.renameTo(newFile);
+		   i++;
+		   int splitter = splitter(newFileSplit[0].length(), i);
+		   System.out.println(oldFileSplit[0] + (i + 1) + oldFileSplit[1]);
+		   newFile = new File(newFileSplit[0].substring(0, splitter) + (i) + "_" + newFileSplit[1]);
+		   oldFile = new File(oldFileSplit[0] + (i + 1) + oldFileSplit[1]);
+	   }
+   }
  
+   public static void renameFilesAfterDeleting(String filename, int numFiles) {
+	   String[] fileSplit = filename.split("_");
+	   String fileName = filename;
+	   String nextName;
+	   for (int i = 0; i <= numFiles; i++) {
+		   int split = splitter(fileSplit[0].length(), i);
+		   fileName = fileSplit[0].substring(0, split) + (i) + "_" + fileSplit[1];
+		   File file = new File(fileName);
+		   File newFile;
+		   if(file.exists()) {
+			   continue;
+		   }
+		   else {
+			   int j = i;
+			   int splut = splitter(fileSplit[0].length(), j);
+			   nextName = fileSplit[0].substring(0, splut) + (j) + "_" + fileSplit[1];
+			   newFile = new File(nextName);
+			   while(!newFile.exists() && j < numFiles + 1) {
+				   splut = splitter(fileSplit[0].length(), j);
+				   nextName = fileSplit[0].substring(0, splut) + (j) + "_" + fileSplit[1];
+				   newFile = new File(nextName);
+				   System.out.println(newFile.toString());
+				   j++;
+			   }
+			   int splitter = splitter(fileSplit[0].length(), i);
+			   newFile.renameTo(new File(fileSplit[0].substring(0, splitter) + (i) + "_" + fileSplit[1]));
+		   }
+		   
+		   
+	   }
+   }
+    public static void ImageCombinerAllFiles(String filename, int combNumber) {
+    	
+    	BufferedImage originalImage;
+    	String fileName = filename;
+    	String[] fileSplit = filename.split("_");
+
+    	File file = new File(fileName);
+    	int i = 0;
+		try {
+			while(file.exists()) {
+				originalImage = ImageIO.read(new File(fileName));
+				BufferedImage combined = new BufferedImage(originalImage.getWidth(), combNumber * originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = combined.createGraphics();
+				for (int j = 0; j < combNumber; j++)
+					g.drawImage(originalImage, 0, j * originalImage.getHeight(), originalImage.getWidth(), originalImage.getHeight(), null);
+				String newFile = fileSplit[0].substring(0, fileSplit[0].length() - 1) + (i + 10) + "_" + fileSplit[1];
+				ImageIO.write(combined, "png", new File(newFile));
+				fileName = fileSplit[0].substring(0, fileSplit[0].length() - 1) + i + "_" + fileSplit[1];
+				file = new File(fileName);
+				i++;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+		
+    }
     
+    public static void CombineTwoImages(String topFile, String bottomFile) throws IOException{
+    	BufferedImage topImage = ImageIO.read(new File(topFile));
+    	BufferedImage bottomImage = ImageIO.read(new File(bottomFile));
+    	
+    	BufferedImage combined = new BufferedImage(topImage.getWidth(), topImage.getHeight() + bottomImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+    	Graphics2D g = combined.createGraphics();
+    	g.drawImage(topImage, 0, 0, topImage.getWidth(), topImage.getHeight(), null);
+    	g.drawImage(bottomImage, 0, topImage.getHeight(), bottomImage.getWidth(), bottomImage.getHeight(), null);
+    	
+    	ImageIO.write(combined, "png", new File(bottomFile));
+    }
     
+    public static void ImageCombiner(String filename, int combNumber) throws IOException{
+    	BufferedImage originalImage;
+    	String fileName = filename;
+    	
+    	originalImage = ImageIO.read(new File(fileName));
+		BufferedImage combined = new BufferedImage(originalImage.getWidth(), combNumber * originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = combined.createGraphics();
+		for (int j = 0; j < combNumber; j++)
+			g.drawImage(originalImage, 0, j * originalImage.getHeight(), originalImage.getWidth(), originalImage.getHeight(), null);
+		ImageIO.write(combined, "png", new File(fileName));
+
+    }
+    public static int splitter(int strlength, int i) {
+    	if(i < 10)
+    		return strlength - 1;
+    	else return strlength - 2;
+    }
     public static void ImageCopier(String filename, int imgToCopy, int copies, int imgNumber) throws IOException{
+    	
+    	
     	String[] fileSplit = filename.split("_");
         String fileName = "";
+    
     	for (int i = imgNumber; i > imgToCopy; i--) {
     		int splitter;
     		if (i < 10) {
@@ -88,7 +154,7 @@ public class Image {
     		oldFile.renameTo(newFile);
     	}
     	
-    	
+    
     	
     	int splitter;
 		if (imgToCopy < 10) {
@@ -116,37 +182,10 @@ public class Image {
     }
     public static void main(String[] args) throws IOException {
     	
-    	String fileName = "Boss/Shadow/shadow/00_shadow.png";
-    	Image.ImageCopier(fileName, 5, 20, 19);
-    	/*
-        try {
-            Image image = new Image();
-            for (int i = 0; i < 15; i++) {
-            BufferedImage originalImage = ImageIO.read(new File("DeathBringer/Attack/0" + i + "_flipped_Attack.png"));
-            BufferedImage flippedImage = image.imgFlipper(originalImage);
-            ImageIO.write(flippedImage, "png", new File("DeathBringer/Attack/0" + i + "_flipped_Attack.png"));
-            System.out.println("flipped");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       */
+    	String fileName = "Boss/Lightning/Lightning/00_Lightning.png";
     	
-    	/*
+    	Image.renameFilesAfterDeleting(fileName, 17);
     	
-    	try {
-            Image image = new Image();
-            for (int i = 1; i < 10; i++) {
-            BufferedImage originalImage = ImageIO.read(new File("DeathBringer/Walk/Bringer-of-Death_Walk_" + i + ".png"));
-            //BufferedImage flippedImage = image.imgFlipper(originalImage);
-
-            ImageIO.write(originalImage, "png", new File("DeathBringer/Walk/0" + (i - 1) + "_Walk.png"));
-            System.out.println("flipped");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
     }
 }
 

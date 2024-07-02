@@ -10,7 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
 
-import Boss.FireBallListener;
 import Boss.*;
 import Creature.Creature;
 import Creature.Reaper;
@@ -20,7 +19,7 @@ import Entity.EntityFactory;
 import ImageHandler.TextConverter;
 import Living.FireBall;
 import Living.Living;
-import Living.Shadow;
+import Living.*;
 import Player.Physics;
 import Player.Player;
 import Screen.Screen;
@@ -36,7 +35,7 @@ public class Game implements AttackListener {
     private List<Platform> plats = new ArrayList<Platform>();
     private List<Entity> entities = new CopyOnWriteArrayList<Entity>();
     private List<Creature> creatures = new ArrayList<Creature>();
-    private List<Living> living = new ArrayList<Living>();
+    private List<Living> liveList = new ArrayList<Living>();
     private List<Moving> moves = new ArrayList<Moving>();
     private List<Creature> creaturesToAdd = new ArrayList<Creature>();
     private boolean running = true;
@@ -138,8 +137,8 @@ public class Game implements AttackListener {
             lastTime = now;
             //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
             while (delta >= 1) {
-                physics.update();
-                mage.update();
+               physics.update();
+               mage.update();
                 
                 //flame.update();
                 updateEntities();
@@ -157,7 +156,7 @@ public class Game implements AttackListener {
                     
                 }
                 
-                for (Iterator<Living> iterator = living.iterator(); iterator.hasNext();) {
+                for (Iterator<Living> iterator = liveList.iterator(); iterator.hasNext();) {
                 	Living living = iterator.next();
                 		if (living.isBanished()) {
                 			entities.remove(living);
@@ -283,16 +282,12 @@ public class Game implements AttackListener {
 
 
     @Override
-    public void onFireBallCreated(FireBall fireBall) {
-        entities.add(fireBall);
-        living.add(fireBall);
+    public void onLivingCreated(Living living) {
+        entities.add(living);
+        liveList.add(living);
     }
     
-    @Override
-    public void onShadowCreated(Shadow shadow) {
-    	entities.add(shadow);
-    	living.add(shadow);
-    }
+
     
     public static void main(String[] args) {
         Game game = new Game();

@@ -17,6 +17,7 @@ public class Shadow extends Living{
 	}
 
 	public void update() {
+		
 		moveEntity();
 		if ((getX() > 700 && getVelocityX() > 0)
 			|| (getX() < 40 && getVelocityX() < 0)) {

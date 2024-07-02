@@ -225,7 +225,7 @@ public class Player extends Entity {
     public void jump() {
         upKeyPressed++;
         if (upKeyPressed == 1 && getVelocityY() >= 0 && isInCollision()) {
-            setVelocityY(NEGATIVE_V * 3);
+            setVelocityY(NEGATIVE_V * 2);
         } else {
             setVelocityY(POSITIVE_V);
         }

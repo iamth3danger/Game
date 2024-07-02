@@ -16,7 +16,7 @@ public class ShadowAttack extends Attack{
 	 public void animation() {
 	    	if (System.currentTimeMillis() - getMage().getTime() > 500 && !shadowMade) {
 	    		shadow = new Shadow(200, 538);
-	    		getListener().onShadowCreated(shadow);
+	    		getListener().onLivingCreated(shadow);
 	    		shadowMade = true;
 	    		if (shadow.getAnimation() == null) {
 	    			System.out.println("null");

@@ -8,6 +8,8 @@ public class AttackFactory {
 			return new FireBallAnimation(mage);
 		case SHADOW:
 			return new ShadowAttack(mage);
+		case LIGHTNING:
+			return new LightningAttack(mage);
 		default:
 			throw new IllegalArgumentException("Invalid Attack type");
 		}

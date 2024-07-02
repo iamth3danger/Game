@@ -1,27 +1,37 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 public class Screen {
     private JFrame frame;
     private Player player;
-    //private Platform[] platforms;
-    private Physics physics;
-    private Platform[][] platforms;
-    private List<Platform> plats = new ArrayList<Platform>();
+
+    private BufferedImage backgroundImage;
     private List<Entity> entities = new ArrayList<Entity>();
     
-    public Screen(Game game) {
+    public Screen(Game game){
+    	this.backgroundImage = null;
     	this.entities = new ArrayList<Entity>(game.getEntities());
     	if (this.entities == null) throw new NullPointerException("here");
     	this.player = (Player) this.entities.get(0);
         frame = new JFrame("Color Screen");
         frame.setSize(800, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-   
+        
+        try {
+            this.backgroundImage = ImageIO.read(new File("C:\\Users\\johns\\git\\Game\\Game\\background.jpg"));
+        } catch (IOException e) {
+            System.out.println("Error loading background image: " + e.getMessage());
+            e.printStackTrace();
+            // Handle the exception (e.g., show an error message)
+        }
 
         frame.addKeyListener(new KeyAdapter() {
             @Override
@@ -35,22 +45,28 @@ public class Screen {
             }
         });
 
+   
+        
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                drawImage(g);
+                // Draw the background image
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+                
+               // drawImage(g);
             }
         };
-        panel.setBackground(new Color(0, 0, 0)); // #B92FC7
         frame.add(panel);
     }
-
 
   
     
     public void drawImage(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
+        
 
         // Calculate the offset to keep the player in the center of the screen
         int offsetX = (frame.getWidth() - player.getWidth()) / 2 - player.getX();

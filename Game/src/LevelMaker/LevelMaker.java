@@ -34,7 +34,7 @@ public class LevelMaker extends JPanel {
         setPreferredSize(new Dimension(800, 640));
         setBackground(Color.BLACK);
 
-        String[] menuItems = {"Tile", "Platform", "Spike", "Green Tile", "Red Tile", "Mushroom", "Reaper", "Goblin", "Flying Eye", "Skeleton"};
+        String[] menuItems = {"Tile", "Platform", "Green Tile", "Red Tile", "Mushroom", "Reaper", "Goblin", "Flying Eye", "Skeleton"};
 
         for (String item : menuItems) {
             JMenuItem menuItem = new JMenuItem(item);
@@ -282,7 +282,7 @@ public class LevelMaker extends JPanel {
                 level.append("\n");
             }
 
-            try (FileWriter out = new FileWriter("level7.txt")) {
+            try (FileWriter out = new FileWriter("level9.txt")) {
                 out.write(level.toString());
             }
         } catch (IOException e) {

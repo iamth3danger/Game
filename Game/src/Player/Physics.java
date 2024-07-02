@@ -7,6 +7,7 @@ import Creature.Mushroom;
 import Creature.Reaper;
 import DataStructures.Grid;
 import Entity.Entity;
+import Living.Lightning;
 import Tile.GreenTile;
 import Tile.Platform;
 import Tile.RedTile;
@@ -146,6 +147,10 @@ public class Physics {
                     //System.out.println("yea!");
                     Creature creature = (Creature) entity;
                     creature.setHealth(0);
+                }
+                
+                if (entity instanceof Lightning) {
+                	System.out.println("lightlight");
                 }
             }
             if (!(entity instanceof Player) && player.isCollidingWith(entity)) {
