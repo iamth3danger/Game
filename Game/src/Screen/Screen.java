@@ -1,4 +1,5 @@
 package Screen;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import Creature.Creature;
@@ -19,6 +20,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -33,11 +36,23 @@ public class Screen {
     private boolean isGameOverVisible = false;
     private Color continueColor = Color.WHITE;
     private Rectangle continueRect;
+    private BufferedImage backgroundImage;
+    
     
     public Screen(Game game) {
         this.entities = new ArrayList<Entity>(game.getEntities());
         if (this.entities == null) throw new NullPointerException("here");
         this.player = (Player) this.entities.get(0);
+        
+        try {
+        	backgroundImage = ImageIO.read(new File("background.png"));
+        }
+        catch(IOException e) {
+        	 System.out.println("Error loading background image: " + e.getMessage());
+             e.printStackTrace();
+        }
+        
+        
         frame = new JFrame("Color Screen");
         frame.setSize(800, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,6 +93,9 @@ public class Screen {
                     g.setFont(new Font("Arial", Font.BOLD, 30));
                     g.drawString("Continue", 370, 400);
                 } else {
+                	 if (backgroundImage != null) {
+                         g.drawImage(backgroundImage, 0, 0, null); // Draw image at (0,0)
+                     }
                     drawImage(g);
                 }
             }

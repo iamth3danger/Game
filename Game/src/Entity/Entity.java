@@ -153,7 +153,7 @@ public abstract class Entity {
         }
     }
   
-    protected void moveEntity() {
+    public void moveEntity() {
     	setX(getX() + getVelocityX());
     	setY(getY() + getVelocityY());
     }

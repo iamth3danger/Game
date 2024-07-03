@@ -9,7 +9,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 public class Image {
-    public BufferedImage imgFlipper(BufferedImage image) {
+    public static BufferedImage imgFlipper(BufferedImage image) {
         BufferedImage flippedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -19,6 +19,27 @@ public class Image {
         return flippedImage;
     }
 
+   public static void flipAllImages(String filename) {
+	   String fileName = filename;
+	   String[] fileSplit = filename.split("_");
+	   File file = new File(fileName);
+	   int i = 0;
+	   
+	   while(file.exists()) {
+		   try {
+			   int split = splitter(fileSplit[0].length(), i);
+			   fileName = fileSplit[0].substring(0, split) + (i) + "_" + fileSplit[1];
+			   file = new File(fileName);
+			   BufferedImage flippedImage = imgFlipper(ImageIO.read(file));
+			   String flipped = fileSplit[0].substring(0, split) + (i) + "_flipped_" + fileSplit[1];
+			   ImageIO.write(flippedImage, "png", new File(flipped));
+			   i++;
+		   }
+		   catch(IOException e) {
+			   e.printStackTrace();
+		   }
+	   }
+   }
    public static void ImageRenamer(String filename, String newFileName) {
 	   String[] oldFileSplit = filename.split("\\d");
 	   String[] newFileSplit = newFileName.split("_");
@@ -27,7 +48,8 @@ public class Image {
 	   File newFile = new File(newFileName);
 	 
 	   int i = 0;
-
+	   System.out.println(oldFile.toString());
+	   if(!oldFile.exists()) System.out.println("File not found!");
 	   while(oldFile.exists()) {
 		   oldFile.renameTo(newFile);
 		   i++;
@@ -182,9 +204,10 @@ public class Image {
     }
     public static void main(String[] args) throws IOException {
     	
-    	String fileName = "Boss/Lightning/Lightning/00_Lightning.png";
+    	String fileName = "Boss/SmallSpark/SmallSpark/small-spark1.png";
+    	String newFile = "Boss/SmallSpark/SmallSpark/00_smallspark.png";
     	
-    	Image.renameFilesAfterDeleting(fileName, 17);
+    	Image.ImageRenamer(fileName, newFile);
     	
     }
 }

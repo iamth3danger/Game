@@ -220,7 +220,9 @@ public class Player extends Entity {
     	this.move = move;
     }
     
-    
+    public PlayerLastMove getMove() {
+    	return move;
+    }
     
     public void jump() {
         upKeyPressed++;

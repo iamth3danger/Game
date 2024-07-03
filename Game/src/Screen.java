@@ -56,7 +56,7 @@ public class Screen {
                     g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 }
                 
-               // drawImage(g);
+               //drawImage(g);
             }
         };
         frame.add(panel);
@@ -86,7 +86,7 @@ public class Screen {
         for (Entity entity : entities) {
             if (entity.getImage() != null) {
                 TexturePaint texturePaint = new TexturePaint(entity.getImage(), new Rectangle(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight()));
-                g2d.setPaint(texturePaint);
+               // g2d.setPaint(texturePaint);
                 g2d.fillRect(entity.getX(), entity.getY(), entity.getImage().getWidth(), entity.getImage().getHeight());
             }
         }
@@ -100,4 +100,6 @@ public class Screen {
     public JFrame getFrame() {
         return frame;
     }
+    
+    
 }

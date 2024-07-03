@@ -1,16 +1,16 @@
 package Game;
 
 
-import java.awt.*;
-
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
-import Boss.*;
+import Boss.AttackListener;
+import Boss.Mage;
 import Creature.Creature;
 import Creature.Reaper;
 import DataStructures.Grid;
@@ -19,7 +19,7 @@ import Entity.EntityFactory;
 import ImageHandler.TextConverter;
 import Living.FireBall;
 import Living.Living;
-import Living.*;
+import Living.Shadow;
 import Player.Physics;
 import Player.Player;
 import Screen.Screen;
@@ -47,32 +47,14 @@ public class Game implements AttackListener {
     
     public Game(){
     	
-    	this.player = new Player(100, 100);
+    	this.player = new Player(300, 100);
     	//this.atttk = new ReaperAttack(400, 400);
     	entities.add(player);
-    	
-    	 /*
-         for (int i = 0; i < 8; i++) {
-             double angle = Math.PI / 4 * i;
-             int x = (int) (100 + 50 * Math.cos(angle));
-             int y = (int) (200 + 50 * Math.sin(angle));
-             fireballs[i] = new FireBall(x, y);
-             entities.add(fireballs[i]);
-         }
-         FireBall.findCenters(fireballs);
-         for (FireBall fire : fireballs)
-        	 fire.initAngle();
-         // Now you can call the rotate method on each fireball
-         */
-    	this.mage = new Mage(100, 370, this);
-    	mage.setVelocity(1, 2);
+
+    	this.mage = new Mage(150, 250, this, player);
+    	mage.setVelocity(0, 0);
     	entities.add(mage);
-    	
-    	//this.flame = new FireBall(mage.getX() + mage.getWidth(), mage.getY());
-    	//this.flame = new FireBall(100, 400);
-    	//flame.setVelocity(1, 1);
-    	//entities.add(flame);
-    	//entities.add(atttk);
+
         // Create a 2D array of strings
     	String[][] level = TextConverter.convertTextFileToArray("level7.txt");
     	

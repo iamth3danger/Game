@@ -1,42 +1,45 @@
 package Boss;
 
 import java.awt.image.BufferedImage;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import Creature.Animation;
 import Entity.Entity;
 import ImageHandler.ImageLoader;
-import Living.*;
+import Player.Player;
 public class Mage extends Entity {
     private String animationFile;
     private Animation animation;
-    private Timer timer;
+    private Animation animationFlipped;
     private AttackListener listener;
     private long createTime;
-    private FireBallAnimation fireballAnimation;
-    private Shadow shadow;
-    private boolean shadowMade = false;
-    private ShadowAttack shadowAttack;
+    private long movementTimer;
+    private boolean onLeftSide = true;
+    private int leftPoint = 200;
+    private int rightPoint = 600;
+    private int centerX = getX() - 25;
+    private int centerY = getY();
+    private int radius = 25;
+    private double angle = 0;
+    
     private AttackType currentAttack;
-    private AttackType[] attackList = {AttackType.FIREBALL, AttackType.SHADOW, AttackType.LIGHTNING};
+    private AttackType[] attackList = {AttackType.SPARK};
     private int attackCounter = 0;
     private Attack attack;
-    private Lightning lightning;
-    
-    public Mage(int x, int y, AttackListener listener) {
+    private Player player;
+    public Mage(int x, int y, AttackListener listener, Player player) {
         super(x, y);
         this.listener = listener;
         this.animationFile = "Boss/Mage/Stage1/mageStage1/00_mageStage1.png";
         setWidth(40);
         setHeight(40);
         init();
-        //animate();
-        currentAttack = AttackType.SHADOW;
+        this.player = player;
+        
+        currentAttack = AttackType.SPARK;
         attack = AttackFactory.createAttack(currentAttack, this);
         createTime = System.currentTimeMillis();
-       // this.lightning = new Lightning(200, 500);
-        //listener.onLivingCreated(lightning);
+        movementTimer = System.currentTimeMillis();
+
     }
 
    
@@ -45,26 +48,81 @@ public class Mage extends Entity {
     }
     private void init() {
         this.animation = new Animation(ImageLoader.loadImages(getAnimationFile()), 100, true, null);
+        this.animationFlipped = new Animation(ImageLoader.loadFlippedImages(getAnimationFile()), 100, true, null);
     }
 
     public void update() {
-    	attack.animation();
 
-    	if (attack.isCompleted()) {
-    		attackCounter++;
-    		currentAttack = attackList[attackCounter % attackList.length];
-    		setCurrentAttack(currentAttack);
-    	}
+    	//if (currentAttack == AttackType.SPARK) {
+	    	 double newX = centerX + radius * Math.cos(5 * Math.PI * angle);
+	         double newY = centerY + (2 * radius) * Math.sin(7 * Math.PI *angle);
+	    	
+	         setX((int) newX);
+	         setY((int) newY);
+	         
+	         angle += .004;
+	         
+	         centerX += getVelocityX();
+	         
+	         sideSwitcher();
+	    	
+	    	attack.animation();
+	
+	    	if (attack.isCompleted()) {
+	    		attackCounter++;
+	    		currentAttack = attackList[attackCounter % attackList.length];
+	    		setCurrentAttack(currentAttack);
+	    	}
+    	//}
+   // 	else {
+    		//System.out.println();
+    	//}
     }
     
+    private void sideSwitcher() {
+    	if(sixSecondsPassed() && onLeftSide) {
+    		setVelocityX(4);
+    		if(atRightPoint()) {
+    			setVelocityX(0);
+    			movementTimer = System.currentTimeMillis();
+    			onLeftSide = false;
+    		}
+    	
+    	}
+    	else if(sixSecondsPassed() && !onLeftSide) {
+    		setVelocityX(-4);
+    		if(atLeftPoint()) {
+    			setVelocityX(0);
+    			movementTimer = System.currentTimeMillis();
+    			onLeftSide = true;
+    		}
+    	}
+    }
+
+    private boolean atLeftPoint() {
+    	if(Math.abs(leftPoint - getX()) < 10)
+    		return true;
+    	else
+    		return false;
+    }
+    private boolean sixSecondsPassed() {
+    	if(System.currentTimeMillis() - movementTimer > 6000)
+    		return true;
+    	else
+    		return false;
+    }
+    
+    private boolean atRightPoint() {
+    	if(Math.abs(rightPoint - getX()) < 10)
+    		return true;
+    	else
+    		return false;
+    }
     private void setCurrentAttack(AttackType variation) {
     	attack = AttackFactory.createAttack(variation, this);
     }
     
-    @Override
-    public BufferedImage imageChecker() {
-        return animation.getCurrentImage();
-    }
+    
 
 	@Override
 	public String textSymbol() {
@@ -90,5 +148,20 @@ public class Mage extends Entity {
 		createTime = System.currentTimeMillis();
 	}
 
+	@Override
+	public BufferedImage imageChecker() {
+		BufferedImage currentImage = null;
+		if(onLeftSide) {
+			currentImage = animation.getCurrentImage();
+		}
+		else {
+			currentImage = animationFlipped.getCurrentImage();
+		}
+		return currentImage;
+	}
+	
+	
+	
+	
 	
 }

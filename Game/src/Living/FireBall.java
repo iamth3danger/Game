@@ -9,7 +9,7 @@ public class FireBall extends Living {
     private int initialY;
     private long createTime;
     private double angleDiff = .05;
-    private int radius = 50;
+    private int radius = 100;
     public boolean extinguish = false;
     
     public FireBall(int x, int y) {
@@ -67,7 +67,7 @@ public class FireBall extends Living {
     
     
     public void moveAwayFromCenter() {
-        radius += 5;
+        radius += 8;
     }
     
     public static void findCenters(FireBall[] fireballs) {

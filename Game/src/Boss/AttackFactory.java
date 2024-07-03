@@ -10,6 +10,8 @@ public class AttackFactory {
 			return new ShadowAttack(mage);
 		case LIGHTNING:
 			return new LightningAttack(mage);
+		case SPARK:
+			return new SparkSweepAttack(mage);
 		default:
 			throw new IllegalArgumentException("Invalid Attack type");
 		}

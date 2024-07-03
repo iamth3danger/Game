@@ -32,6 +32,7 @@ public abstract class Living extends Entity {
         setY(getY() + getVelocityY());
     }
 
+	
 	public Animation getAnimation() {
 		return animation;
 	}
