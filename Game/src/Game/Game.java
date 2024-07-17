@@ -51,12 +51,12 @@ public class Game implements AttackListener {
     	//this.atttk = new ReaperAttack(400, 400);
     	entities.add(player);
 
-    	this.mage = new Mage(150, 250, this, player);
-    	mage.setVelocity(0, 0);
-    	entities.add(mage);
+//    	this.mage = new Mage(150, 250, this, player);
+//    	mage.setVelocity(0, 0);
+//    	entities.add(mage);
 
         // Create a 2D array of strings
-    	String[][] level = TextConverter.convertTextFileToArray("level7.txt");
+    	String[][] level = TextConverter.convertTextFileToArray("level9.txt");
     	
     	for (int i = 0; i < level.length; i++) {
     	    for (int j = 0; j < level[i].length; j++) {
@@ -120,7 +120,7 @@ public class Game implements AttackListener {
             //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
             while (delta >= 1) {
                physics.update();
-               mage.update();
+              // mage.update();
                 
                 //flame.update();
                 updateEntities();
@@ -197,7 +197,7 @@ public class Game implements AttackListener {
         entities.add(player);
 
      // Load the level again
-        String[][] level = TextConverter.convertTextFileToArray("level.txt");
+        String[][] level = TextConverter.convertTextFileToArray("level9.txt");
 
         for (int i = 0; i < level.length; i++) {
             for (int j = 0; j < level[i].length; j++) {

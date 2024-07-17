@@ -19,7 +19,7 @@ public class Spark extends Living{
 		super(x, y);
 		this.animationFileA = "Boss/SmallSpark/SmallSpark/00_smallspark.png";
 		this.animationFileB = "Boss/Spark/Spark/00_spark.png";
-		this.setVelocity(2,	0);
+		this.setVelocityY(5);
 		init();
 	}
 

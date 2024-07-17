@@ -32,7 +32,7 @@ public class Image {
 			   file = new File(fileName);
 			   BufferedImage flippedImage = imgFlipper(ImageIO.read(file));
 			   String flipped = fileSplit[0].substring(0, split) + (i) + "_flipped_" + fileSplit[1];
-			   ImageIO.write(flippedImage, "png", new File(flipped));
+			   ImageIO.write(flippedImage, "png", new File(fileName));
 			   i++;
 		   }
 		   catch(IOException e) {
@@ -204,10 +204,10 @@ public class Image {
     }
     public static void main(String[] args) throws IOException {
     	
-    	String fileName = "Boss/SmallSpark/SmallSpark/small-spark1.png";
+    	String fileName = "DeathBringer/Walk/00_Walk.png";
     	String newFile = "Boss/SmallSpark/SmallSpark/00_smallspark.png";
     	
-    	Image.ImageRenamer(fileName, newFile);
+    	Image.flipAllImages(fileName);
     	
     }
 }

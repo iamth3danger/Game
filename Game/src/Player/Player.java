@@ -25,8 +25,8 @@ public class Player extends Entity {
     private BufferedImage[] attackImages;
     private BufferedImage[] attackImagesFlipped;
     private Sword sword;
-    private final int POSITIVE_V = 10;
-    private final int NEGATIVE_V = -10;
+    private final int POSITIVE_V = 8;
+    private final int NEGATIVE_V = -8;
     private PlayerLastMove move = PlayerLastMove.RIGHT;
     private boolean isInCollision = false;
     private int upKeyPressed = 0;

@@ -44,6 +44,7 @@ public abstract class Creature extends Entity {
     private int indexAttack = 1;
     private long lastAttackTime = 0;
     private boolean isFlying = false;
+    private ImageType currentImage;
     
     
     
@@ -178,12 +179,12 @@ public abstract class Creature extends Entity {
 
 	private void checkAttack() {
 	    long currentTime = System.currentTimeMillis();
-	    if (!isAttacking && currentTime - lastAttackTime >= 2000) { // 2000 milliseconds = 2 seconds
+	 //   if (!isAttacking && currentTime - lastAttackTime >= 2000) { // 2000 milliseconds = 2 seconds
 	        if ((getVelocityX() < 0 && Math.abs(getX() - (startingPositionX - 50)) < 4) || (getVelocityX() > 0 && Math.abs(getX() - (startingPositionX + 50)) < 4)) {
 	            attacking();
 	            lastAttackTime = currentTime;
 	        }
-	    }
+	//    }
 	}
 
 	private void checkBoundaries() {
@@ -203,39 +204,54 @@ public abstract class Creature extends Entity {
 	@Override
 	public BufferedImage imageChecker() {
 	    if (isAttacking && getHealth() > 0) {
-	        if (side == SideFacing.RIGHT ) {
+	        if (currentImage == ImageType.RUN || currentImage == ImageType.ATTACK) {
+	        	currentImage = ImageType.RUN;
 	            setVelocityX(0);
 	            BufferedImage image = attackAnimation.getCurrentImage();
-	            if (attackAnimation.isFinished()) {
+	            if (attackAnimation.atLastIndex()) {
 	                isAttacking = false;
 	                setVelocityX(2); // Restore original velocity after attack is finished
 	                setX(getReverseXModifier());
 	            }
 	            return image;
-	        } else {
+	        } else if (currentImage == ImageType.RUNFLIPPED || currentImage == ImageType.ATTACKFLIPPED){
+	        	currentImage = ImageType.RUNFLIPPED;
 	            setVelocityX(0);
 	            BufferedImage image = attackFlippedAnimation.getCurrentImage();
-	            if (attackFlippedAnimation.isFinished()) {
+	            if (attackFlippedAnimation.atLastIndex()) {
 	                isAttacking = false;
 	                setVelocityX(-2); // Restore original velocity after attack is finished
 	                setX(getReverseXModifier());
 	            }
 	            return image;
+	        } else {
+	        	return null;
 	        }
 	    } else if (getHealth() == 0) {
 	        setCollidable(false);
 	        System.out.println(isCollidable());
+	        currentImage = ImageType.DEATH;
 	        return noHealthAnimation.getCurrentImage();
 	    } else if (getVelocityX() < 0) {
+	    	currentImage = ImageType.RUNFLIPPED;
 	        return runFlippedAnimation.getCurrentImage();
 	    } else if (getVelocityX() > 0) {
+	    	currentImage = ImageType.RUN;
 	        return runAnimation.getCurrentImage();
 	    } else {
+	    	currentImage = ImageType.IDLE;
 	        return idleAnimation.getCurrentImage();
 	    }
 	}
 
-	
+	private enum ImageType{
+		RUN,
+		RUNFLIPPED,
+		ATTACK,
+		ATTACKFLIPPED,
+		DEATH,
+		IDLE
+	}
 
 	protected void attacking() {
 	    isAttacking = true;

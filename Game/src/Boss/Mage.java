@@ -13,7 +13,8 @@ public class Mage extends Entity {
     private AttackListener listener;
     private long createTime;
     private long movementTimer;
-    private boolean onLeftSide = true;
+   
+	private boolean onLeftSide = true;
     private int leftPoint = 200;
     private int rightPoint = 600;
     private int centerX = getX() - 25;
@@ -22,7 +23,9 @@ public class Mage extends Entity {
     private double angle = 0;
     
     private AttackType currentAttack;
-    private AttackType[] attackList = {AttackType.SPARK};
+    private AttackType[] attackList = {AttackType.LIGHTNING, AttackType.SHADOW, AttackType.FIREBALL, AttackType.SPARK};
+   
+    
     private int attackCounter = 0;
     private Attack attack;
     private Player player;
@@ -53,39 +56,52 @@ public class Mage extends Entity {
 
     public void update() {
 
-    	//if (currentAttack == AttackType.SPARK) {
-	    	 double newX = centerX + radius * Math.cos(5 * Math.PI * angle);
-	         double newY = centerY + (2 * radius) * Math.sin(7 * Math.PI *angle);
-	    	
-	         setX((int) newX);
-	         setY((int) newY);
-	         
-	         angle += .004;
-	         
-	         centerX += getVelocityX();
-	         
-	         sideSwitcher();
-	    	
-	    	attack.animation();
-	
-	    	if (attack.isCompleted()) {
-	    		attackCounter++;
-	    		currentAttack = attackList[attackCounter % attackList.length];
-	    		setCurrentAttack(currentAttack);
-	    	}
-    	//}
-   // 	else {
-    		//System.out.println();
-    	//}
+    	changeSideFacing();
+    	
+		if (currentAttack != AttackType.SPARK) {
+			double newX = centerX + radius * Math.cos(5 * Math.PI * angle);
+			double newY = centerY + (2 * radius) * Math.sin(7 * Math.PI * angle);
+
+			setX((int) newX);
+			setY((int) newY);
+
+			angle += .004;
+
+			centerX += getVelocityX();
+
+			sideSwitcher();
+
+		}
+		
+		attack.animation();
+
+		if (attack.isCompleted()) {
+			attackCounter++;
+			currentAttack = attackList[attackCounter % attackList.length];
+			setCurrentAttack(currentAttack);
+		}
+
+
     }
     
-    private void sideSwitcher() {
+    private void changeSideFacing() {
+    	if(this.getX() >= 600)
+    		onLeftSide = false;
+    	else if(this.getX() <= 210)
+    		onLeftSide = true;
+    }
+    
+    public boolean isOnLeftSide() {
+		return onLeftSide;
+	}
+
+
+	private void sideSwitcher() {
     	if(sixSecondsPassed() && onLeftSide) {
     		setVelocityX(4);
     		if(atRightPoint()) {
     			setVelocityX(0);
     			movementTimer = System.currentTimeMillis();
-    			onLeftSide = false;
     		}
     	
     	}
@@ -94,7 +110,6 @@ public class Mage extends Entity {
     		if(atLeftPoint()) {
     			setVelocityX(0);
     			movementTimer = System.currentTimeMillis();
-    			onLeftSide = true;
     		}
     	}
     }
@@ -122,7 +137,9 @@ public class Mage extends Entity {
     	attack = AttackFactory.createAttack(variation, this);
     }
     
-    
+    public void setCenterX() {
+    	centerX = this.getX() - 25;
+    }
 
 	@Override
 	public String textSymbol() {
@@ -160,8 +177,27 @@ public class Mage extends Entity {
 		return currentImage;
 	}
 	
+	public void moveInYDirection(int y) {
+		double newX = centerX + radius * Math.cos(5 * Math.PI * angle);
+		double newY = centerY + (2 * radius) * Math.sin(7 * Math.PI * angle);
+
+		setX((int) newX);
+		setY((int) newY);
+
+		angle += .004;
+		
+		centerY += y;
+	}
 	
-	
-	
+	 public int[] getCenter() {
+		  int[] center = {centerX, centerY};
+		  return center;
+		}
+
+
+	public int getRadius() {
+		return radius;
+	}
+
 	
 }

@@ -1,15 +1,21 @@
 package LevelMaker;
 import javax.swing.*;
 
+import Creature.Creature;
+import Creature.Reaper;
 import Entity.Entity;
 import Entity.EntityFactory;
 import Entity.EntityType;
+import ImageHandler.TextConverter;
+import Living.Living;
+import Player.Physics;
+import Player.Player;
+import Tile.Moving;
 import Tile.Platform;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List; 
 import java.awt.event.*;  
 import java.io.*;
@@ -29,10 +35,20 @@ public class LevelMaker extends JPanel {
     private JPopupMenu popupMenu = new JPopupMenu();
     private int menuCount = 0;
     private EntityType entityType = EntityType.PLATFORM;
+    private Thread gameThread;
+    private WindowMode gameMode = WindowMode.EDIT;
+    private Physics physics;
+    private Player player;
+    private String levelFile;
     
     public LevelMaker() {
         setPreferredSize(new Dimension(800, 640));
         setBackground(Color.BLACK);
+        levelFile = "level9.txt";
+        
+        if(new File(levelFile).exists()) {
+        	loadLevel(levelFile);
+        }
 
         String[] menuItems = {"Tile", "Platform", "Green Tile", "Red Tile", "Mushroom", "Reaper", "Goblin", "Flying Eye", "Skeleton"};
 
@@ -124,54 +140,126 @@ public class LevelMaker extends JPanel {
             }
         });
         
+        if (gameMode == WindowMode.GAME) {
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                physics.keyPressed(e);
+              
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                physics.keyReleased(e);
+            }
+        });
+        }
+        
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "up");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "up");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true), "upReleased");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "down");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "left");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "leftReleased");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "right");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "rightReleased");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0), "show_menu");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), "player");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0), "edit");
         
-        actionMap.put("up", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (yOffset < 600) {
-                    yOffset += 32; // adjust the offset as needed
-                    repaint();
-            	}
-            }
-        });
-
-        actionMap.put("down", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (yOffset > 0) {
-                    yOffset -= 32; // adjust the offset as needed
-                    repaint();
-            	}
-            }
-        });
-
-        actionMap.put("left", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (xOffset < 0) {
-	                xOffset += 32; // adjust the offset as needed
-	                repaint();
-            	}
-            }
-        });
-
-        actionMap.put("right", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                xOffset -= 32; // adjust the offset as needed
-                repaint();
-            }
-        });
         
+        
+
+			actionMap.put("up", new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (gameMode == WindowMode.EDIT) {
+						if (yOffset < 600) {
+							yOffset += 32; // adjust the offset as needed
+							repaint();
+						}
+					}
+					else {
+						player.jump();
+					}
+				}
+	
+			});
+			
+			
+	        actionMap.put("upReleased", new AbstractAction() {
+	        	@Override
+	        	public void actionPerformed(ActionEvent e) {
+	        		if (gameMode == WindowMode.GAME) {
+	        			player.stopJump();
+	        		}
+	        	}
+	        });
+	        
+	        actionMap.put("down", new AbstractAction() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	if (yOffset > 0) {
+	                    yOffset -= 32; // adjust the offset as needed
+	                    repaint();
+	            	}
+	        	}
+	        });
+	
+	        actionMap.put("left", new AbstractAction() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	if (gameMode == WindowMode.EDIT) {
+		            	if (xOffset < 0) {
+			                xOffset += 32; // adjust the offset as needed
+			                repaint();
+		            	}
+	            	}
+	            	else {
+	            		//xOffset = (getWidth() - player.getWidth()) / 2 - player.getX();
+	            		player.moveLeft();
+	            	}
+	            }
+	        });
+	        
+	        
+	        actionMap.put("leftReleased", new AbstractAction() {
+	        	@Override
+	        	public void actionPerformed(ActionEvent e) {
+	        		if (gameMode == WindowMode.GAME) {
+	        			System.out.println("stopped");
+	        			System.out.println(player.getX());
+	        			player.stopMoving();
+	        		}
+	        	}
+	        });
+	
+	        actionMap.put("right", new AbstractAction() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	            	if (gameMode == WindowMode.EDIT) {
+		                xOffset -= 32; // adjust the offset as needed
+		                repaint();
+	            	}
+	            	else {
+	            		//xOffset = (getWidth() - player.getWidth()) / 2 - player.getX();
+	            		player.moveRight();
+	            	}
+	            }
+	        });
+	        
+	        
+	        actionMap.put("rightReleased", new AbstractAction() {
+	        	@Override
+	        	public void actionPerformed(ActionEvent e) {
+	        		if (gameMode == WindowMode.GAME) {
+	        			player.stopMoving();
+	        		}
+	        	}
+	        });
         
         actionMap.put("escape", new AbstractAction() {
             @Override
@@ -196,6 +284,27 @@ public class LevelMaker extends JPanel {
             }
         }); 
         
+        actionMap.put("player", new AbstractAction() {
+        	@Override 
+        	public void actionPerformed(ActionEvent e) {
+        		player = new Player(100, 200);
+        		physics = new Physics(player, entities);
+        		entities.add(player);
+        		gameMode = WindowMode.GAME;
+        		run();
+        	}
+        });
+        
+        actionMap.put("edit", new AbstractAction() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		gameMode = WindowMode.EDIT;
+        		if (player != null) {
+        			entities.remove(player);
+        		}
+        		player = null;
+        	}
+        });
     }
     
 
@@ -247,6 +356,25 @@ public class LevelMaker extends JPanel {
            // noButton.setVisible(false);
         }
     }
+    
+    private void loadLevel(String file) {
+    	String[][] level = TextConverter.convertTextFileToArray(file);
+    	
+    	for (int i = 0; i < level.length; i++) {
+    	    for (int j = 0; j < level[i].length; j++) {
+    	        if (!level[i][j].equals("-")) {
+    	            int x = j * 32;
+    	            int y = i * 32;
+    	            Entity entity = EntityFactory.createEntity(level[i][j], x, y);
+    	            
+    	            entities.add(entity);
+    	           
+        	            }
+    	            }
+    	        }
+    	    }
+    
+   
 
     public void saveLevelToFile() {
         try {
@@ -282,7 +410,7 @@ public class LevelMaker extends JPanel {
                 level.append("\n");
             }
 
-            try (FileWriter out = new FileWriter("level9.txt")) {
+            try (FileWriter out = new FileWriter(levelFile)) {
                 out.write(level.toString());
             }
         } catch (IOException e) {
@@ -291,9 +419,48 @@ public class LevelMaker extends JPanel {
     }
     
     
+	public void run() {
+		gameThread = new Thread(() -> {
+			long lastTime = System.nanoTime();
+			double amountOfTicks = 60.0;
+			double ns = 1000000000 / amountOfTicks;
+			double delta = 0;
+			long timer = System.currentTimeMillis();
+			int frames = 0;
+
+			while (gameMode == WindowMode.GAME) {
+				long now = System.nanoTime();
+				delta += (now - lastTime) / ns;
+				lastTime = now;
+				// creaturesToAdd.clear(); // Clear the list at the beginning of each tick
+				while (delta >= 1) {
+					physics.update();
+					xOffset = (getWidth() - player.getWidth()) / 2 - player.getX();
+
+					if (player.getY() > 700) {
+						player.setX(100);
+						player.setY(200);
+					}
+					// Repaint the frame
+					repaint();
+
+					if (System.currentTimeMillis() - timer > 1000) {
+						timer += 1000;
+						// System.out.println("FPS: " + frames);
+						frames = 0;
+					}
+					
+					delta--;
+				}
+			}
+		});
+		gameThread.start();
+	}
     
-    
-    
+    private enum WindowMode {
+    	GAME,
+    	EDIT
+    }
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

@@ -36,14 +36,19 @@ public class Physics {
 		this.gameOver = gameOver;
 	}
 
-	public Physics(Player player, List<Platform> platforms) {
-        this.player = player;
-        this.plats = platforms;
-    }
+//	public Physics(Player player, List<Platform> platforms) {
+//        this.player = player;
+//        this.plats = platforms;
+//    }
     
     public Physics(List<Entity> entities) {
     	this.entities = new ArrayList<Entity>(entities);
         this.player = (Player) this.entities.get(0);
+    }
+    
+    public Physics(Player player, List<Entity> entities) {
+    	this.entities = new ArrayList<Entity>(entities);
+        this.player = player;
     }
     
     public Physics(Grid grid, Player player) {
@@ -138,6 +143,7 @@ public class Physics {
         // Update player position
         int newX = player.getX() + player.getVelocityX();
         int newY = player.getY() + player.getVelocityY();
+        
 
         player.setInCollision(collision());
         // Check for collisions with platforms
@@ -188,13 +194,13 @@ public class Physics {
 
        
 
-        // Update player position only if it's not on top of an entity
+
         player.setX(newX);
         player.setY(newY);
 
         if (player.getY() > 579) {
-            System.out.println(player.getVelocityY());
-            System.out.println(player.isInCollision());
+//            System.out.println(player.getVelocityY());
+//            System.out.println(player.isInCollision());
             gameOver = true;
         }
     }
