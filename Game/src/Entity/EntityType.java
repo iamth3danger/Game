@@ -10,5 +10,7 @@ public enum EntityType {
     REAPER,
     GOBLIN,
     FLYINGEYE,
-    SKELETON;
+    SKELETON,
+    DOOR,
+    FIREBALL;
 }

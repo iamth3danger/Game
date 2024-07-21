@@ -7,6 +7,7 @@ import Creature.Mushroom;
 import Creature.Reaper;
 import DataStructures.Grid;
 import Entity.Entity;
+import Living.Door;
 import Living.Lightning;
 import Tile.GreenTile;
 import Tile.Platform;
@@ -25,6 +26,9 @@ public class Physics {
     private boolean isOnSomething = false;
     private int upKeyPressed = 0;
     private boolean gameOver = false;
+    private boolean inDoor = false;
+    private boolean nextLevel = false;
+    
     private Grid grid;
     
     public Physics(Player player, Platform[] platforms) {
@@ -43,7 +47,11 @@ public class Physics {
     
     public Physics(List<Entity> entities) {
     	this.entities = new ArrayList<Entity>(entities);
-        this.player = (Player) this.entities.get(0);
+    	 for (Entity entity : entities) {
+         	if (entity instanceof Player) {
+         		this.player = (Player) entity;
+         	}
+         }
     }
     
     public Physics(Player player, List<Entity> entities) {
@@ -71,7 +79,14 @@ public class Physics {
 	public void keyPressed(KeyEvent e) {
 	    switch (e.getKeyCode()) {
 	        case KeyEvent.VK_UP:
-	            player.jump();
+	        	
+	        	if(inDoor) {
+	            	inDoor = false;
+	            	nextLevel = true;
+	            }
+	        	else {
+	        		player.jump();
+	        	}
 	            break;
 	        case KeyEvent.VK_LEFT:
 	            player.moveLeft();
@@ -85,6 +100,8 @@ public class Physics {
 	        case KeyEvent.VK_C:
 	            player.attack();
 	            break;
+	        case KeyEvent.VK_A:
+	        	nextLevel = true;
 	    }
 	    // Update player position
 	  
@@ -94,6 +111,13 @@ public class Physics {
 	    // Check for collisions with platforms
 	
 
+	public boolean toNextLevel() {
+		return nextLevel;
+	}
+	
+	public void inNextLevel() {
+		nextLevel = false;
+	}
     
 	public void keyReleased(KeyEvent e) {
 	    switch (e.getKeyCode()) {
@@ -162,11 +186,20 @@ public class Physics {
             if (!(entity instanceof Player) && player.isCollidingWith(entity)) {
                 // Handle the collision
                 isOnSomething = true;
+                
+                if(entity instanceof Door) {
+                	inDoor = true;
+                	continue;
+                }
 
                 // Check if player is on top of entity
                 if (player.isOnTopOf(entity)) {
                     // Don't move the player vertically
                     newY = entity.getY() - player.getHeight();
+                    if (entity instanceof GreenTile) {
+                    	GreenTile tile = (GreenTile) entity;
+                    	tile.drop();
+                    }
                 }
 
                 // Check if player is right of entity
@@ -202,6 +235,8 @@ public class Physics {
 //            System.out.println(player.getVelocityY());
 //            System.out.println(player.isInCollision());
             gameOver = true;
+        	//player.setX(100);
+        	//player.setY(300);
         }
     }
 

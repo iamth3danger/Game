@@ -56,9 +56,6 @@ public abstract class Creature extends Entity {
 		this.isFlying = isFlying;
 	}
 
-
-
-
 	private SideFacing side = SideFacing.RIGHT;
     
     public Creature(int x, int y) {

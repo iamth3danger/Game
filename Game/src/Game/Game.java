@@ -17,12 +17,14 @@ import DataStructures.Grid;
 import Entity.Entity;
 import Entity.EntityFactory;
 import ImageHandler.TextConverter;
+import Living.Door;
 import Living.FireBall;
 import Living.Living;
 import Living.Shadow;
 import Player.Physics;
 import Player.Player;
 import Screen.Screen;
+import Tile.Block;
 import Tile.Moving;
 import Tile.Platform;
 
@@ -44,19 +46,137 @@ public class Game implements AttackListener {
     private FireBall[] fireballs = new FireBall[8];
     private Grid grid;
     private Shadow shadow;
+    private CurrentLevel currentLevel;
+    private ArrayList<Block> blocks = new ArrayList<Block>();
     
     public Game(){
+    	currentLevel = CurrentLevel.LEVEL1;
     	
-    	this.player = new Player(300, 100);
-    	//this.atttk = new ReaperAttack(400, 400);
-    	entities.add(player);
+    	loadLevel("level9.txt");
+    	    	
+    	
+        screen = new Screen(this);
+       
+        physics = new Physics(entities);
+        screen.background();
+        frame = screen.getFrame();
+    }
 
-//    	this.mage = new Mage(150, 250, this, player);
-//    	mage.setVelocity(0, 0);
-//    	entities.add(mage);
+    public CurrentLevel getCurrentLevel() {
+		return currentLevel;
+	}
 
-        // Create a 2D array of strings
-    	String[][] level = TextConverter.convertTextFileToArray("level9.txt");
+	public void run() {
+    	gameThread = new Thread(() -> {
+        long lastTime = System.nanoTime();
+        double amountOfTicks = 60.0;
+        double ns = 1000000000 / amountOfTicks;
+        double delta = 0;
+        long timer = System.currentTimeMillis();
+        int frames = 0;
+
+       
+        while (running) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / ns;
+            lastTime = now;
+            //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
+            while (delta >= 1) {
+               physics.update();
+              // mage.update();
+                
+                //flame.update();
+               if(currentLevel == CurrentLevel.BOSSLEVEL) {
+               		mage.update();
+               }
+            
+                updateEntities();
+                for (Iterator<Creature> iterator = creatures.iterator(); iterator.hasNext();) {
+                    Creature creature = iterator.next();
+                    creature.animate(plats);
+                    
+                    if (creature.getIsDying()) {
+                        entities.remove(creature);
+                        iterator.remove();
+                    }
+                    
+                    
+                    
+                    
+                }
+                
+                for (Iterator<Living> iterator = liveList.iterator(); iterator.hasNext();) {
+                	Living living = iterator.next();
+                		if (living.isBanished()) {
+                			entities.remove(living);
+                			iterator.remove();
+                  	}
+                }
+                // Add the new creatures to the main list
+                //creatures.addAll(creaturesToAdd);
+
+                for (Moving move : moves) {
+                    move.animate();
+                }
+                
+              
+                delta--;
+            }
+
+           
+           
+
+            if (physics.toNextLevel()) {
+            	loadLevel2();
+            	physics.inNextLevel();
+            }
+            // Repaint the frame
+            frame.repaint();
+
+            if (System.currentTimeMillis() - timer > 1000) {
+                timer += 1000;
+                //System.out.println("FPS: " + frames);
+                frames = 0;
+            }
+        }
+       });
+    	gameThread.start();
+    }
+
+   
+	public void reload() {
+		loadLevel(LevelFactory.levelMaker(getCurrentLevel()));
+		screen.newLevel(player);
+	}
+    
+    
+    
+    private void loadLevel(String levelName) {
+    	
+    	entities.clear();
+    	moves.clear();
+    	plats.clear();
+    	creatures.clear();
+    	
+    	String[][] level = TextConverter.convertTextFileToArray(levelName);
+    	
+    	for (int i = 0; i < level.length; i++) {
+    		ArrayList<Platform> platforms = new ArrayList<Platform>();
+    		
+    	    for (int j = 0; j < level[i].length; j++) {
+    	    	if(level[i][j].equals("#")) {
+    	    		int x = j * 32;
+    	            int y = i * 32;
+    	    		platforms.add((Platform) EntityFactory.createEntity(level[i][j], x, y));
+    	    		if(level[i][j+1].equals("-")) {
+    	    			blocks.add(new Block((Platform[]) platforms.toArray()));
+    	    			platforms.clear();
+    	    		}
+    	    	}
+    	    		
+    	    }
+    	}
+    	
     	
     	for (int i = 0; i < level.length; i++) {
     	    for (int j = 0; j < level[i].length; j++) {
@@ -96,151 +216,23 @@ public class Game implements AttackListener {
     	    }
     	}
     	
-        screen = new Screen(this);
-       
-        physics = new Physics(entities);
-        screen.background();
-        frame = screen.getFrame();
-    }
+    	this.player = new Player(300, 100);
+    	entities.add(player);
+    	physics = new Physics(entities);
+    	
 
-    public void run() {
-    	gameThread = new Thread(() -> {
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
-        long timer = System.currentTimeMillis();
-        int frames = 0;
-
-       
-        while (running) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-            //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
-            while (delta >= 1) {
-               physics.update();
-              // mage.update();
-                
-                //flame.update();
-                updateEntities();
-                for (Iterator<Creature> iterator = creatures.iterator(); iterator.hasNext();) {
-                    Creature creature = iterator.next();
-                    creature.animate(plats);
-                    
-                    if (creature.getIsDying()) {
-                        entities.remove(creature);
-                        iterator.remove();
-                    }
-                    
-                    
-                    
-                    
-                }
-                
-                for (Iterator<Living> iterator = liveList.iterator(); iterator.hasNext();) {
-                	Living living = iterator.next();
-                		if (living.isBanished()) {
-                			entities.remove(living);
-                			iterator.remove();
-                  	}
-                }
-                // Add the new creatures to the main list
-                //creatures.addAll(creaturesToAdd);
-
-                for (Moving move : moves) {
-                    move.animate();
-                }
-                
-              
-                delta--;
-            }
-
-            // Check if the game is over
-            if (physics.isGameOver()) {
-                // Handle game over logic here
-                break;
-            }
-
-            // Repaint the frame
-            frame.repaint();
-
-            if (System.currentTimeMillis() - timer > 1000) {
-                timer += 1000;
-                //System.out.println("FPS: " + frames);
-                frames = 0;
-            }
-        }
-       });
-    	gameThread.start();
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
     
-    public void restart() {
-        // Reset the game state
-    	
-        entities.clear();
-        creatures.clear();
-        plats.clear();
-        moves.clear();
-        
-        // Create a new player
-        this.player = new Player(100, 100);
-        entities.add(player);
-
-     // Load the level again
-        String[][] level = TextConverter.convertTextFileToArray("level9.txt");
-
-        for (int i = 0; i < level.length; i++) {
-            for (int j = 0; j < level[i].length; j++) {
-                if (!level[i][j].equals("-")) {
-                    int x = j * 32;
-                    int y = i * 32;
-                    Entity entity = EntityFactory.createEntity(level[i][j], x, y);
-
-                    if (entity instanceof Reaper) {
-                        entity.setY(entity.getY() - 180);
-                    }
-
-                    entities.add(entity);
-                    if (entity instanceof Creature) {
-                        creatures.add((Creature) entity);
-                    }
-
-                    if (entity instanceof Platform) {
-                        plats.add((Platform) entity);
-                    }
-
-                    if (entity instanceof Moving) {
-                        moves.add((Moving) entity);
-                    }
-
-                    if (entity.getWidth() == 16) {
-                        Entity secondEntity = EntityFactory.createEntity(level[i][j], x + 16, y);
-                        entities.add(secondEntity);
-
-                        if (secondEntity instanceof Moving) {
-                            moves.add((Moving) secondEntity);
-                        }
-                    }
-                }
-            }
-        }
-
-        screen = new Screen(this);
-        physics = new Physics(entities);
-        screen.background();
-        frame = screen.getFrame();
-        running = true;
-        run();
+    public void loadLevel2() {
+    	loadLevel("level7.txt");
+    	updateEntities();
+    	player.setX(100);
+    	player.setY(300);
+    	this.mage = new Mage(150, 250, this, player);
+    	mage.setVelocity(0, 0);
+    	entities.add(mage);
+    	currentLevel = CurrentLevel.BOSSLEVEL;
+    	screen.newLevel(player);
     }
     
     public void updateEntities() {
@@ -270,6 +262,7 @@ public class Game implements AttackListener {
     }
     
 
+    
     
     public static void main(String[] args) {
         Game game = new Game();

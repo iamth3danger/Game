@@ -42,7 +42,13 @@ public class Screen {
     public Screen(Game game) {
         this.entities = new ArrayList<Entity>(game.getEntities());
         if (this.entities == null) throw new NullPointerException("here");
-        this.player = (Player) this.entities.get(0);
+        
+        for (Entity entity : entities) {
+        	if (entity instanceof Player) {
+        		this.player = (Player) entity;
+        	}
+        }
+     
         
         try {
         	backgroundImage = ImageIO.read(new File("background.png"));
@@ -132,11 +138,8 @@ public class Screen {
                 if (continueRect != null && continueRect.contains(e.getPoint())) {
                     // Restart the game
                 
-               game.getPhysics().setGameOver(false);
-                   game.stop();
-                   panel.repaint();
-                   // Game newGame = new Game(); // Create a new game instance
-                    game.restart(); // Run the new game
+                   game.getPhysics().setGameOver(false);
+                   game.reload();
                 }
             }
         });
@@ -146,7 +149,9 @@ public class Screen {
     }
 
 
-
+    public void newLevel(Player player) {
+    	this.player = player;
+    }
   
     
     public void updateEntities(List<Entity> entities) {

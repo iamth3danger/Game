@@ -1,5 +1,6 @@
 package LevelMaker;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import Creature.Creature;
 import Creature.Reaper;
@@ -50,7 +51,53 @@ public class LevelMaker extends JPanel {
         	loadLevel(levelFile);
         }
 
-        String[] menuItems = {"Tile", "Platform", "Green Tile", "Red Tile", "Mushroom", "Reaper", "Goblin", "Flying Eye", "Skeleton"};
+        String[] menuItems = {"Door", "Platform", "Green Tile", "Red Tile", "Mushroom", "Reaper", "Goblin", "Flying Eye", "Skeleton", "FireBall"};
+        
+        JButton YVelocityUp = new BasicArrowButton(BasicArrowButton.NORTH);
+        JButton YVelocityDown = new BasicArrowButton(BasicArrowButton.SOUTH);
+        JButton XVelocityUp = new BasicArrowButton(BasicArrowButton.EAST);
+        JButton XVelocityDown = new BasicArrowButton(BasicArrowButton.WEST);
+        
+        YVelocityUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setJUMP_V(player.getJUMP_V() - 1);	
+			}
+        	
+        });
+        
+        YVelocityDown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setJUMP_V(player.getJUMP_V() + 1);	
+			}
+        	
+        });
+        
+        XVelocityUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setX_DIRECTION_V(player.getX_DIRECTION_V() + 1);	
+			}
+        	
+        });
+        
+        XVelocityDown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setX_DIRECTION_V(player.getX_DIRECTION_V() - 1);	
+			}
+        	
+        });
+        
+        YVelocityUp.setVisible(false);
+        YVelocityDown.setVisible(false);
+        XVelocityUp.setVisible(false);
+        XVelocityDown.setVisible(false);
+        add(YVelocityUp);
+        add(YVelocityDown);
+        add(XVelocityUp);
+        add(XVelocityDown);
 
         for (String item : menuItems) {
             JMenuItem menuItem = new JMenuItem(item);
@@ -62,6 +109,7 @@ public class LevelMaker extends JPanel {
             });
             popupMenu.add(menuItem);
         }
+        
         
         addMouseListener(new MouseAdapter() {
             @Override
@@ -202,11 +250,16 @@ public class LevelMaker extends JPanel {
 	        actionMap.put("down", new AbstractAction() {
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
-	            	if (yOffset > 0) {
-	                    yOffset -= 32; // adjust the offset as needed
-	                    repaint();
+	            	if (gameMode == WindowMode.EDIT) {
+		            	if (yOffset > 0) {
+		                    yOffset -= 32; // adjust the offset as needed
+		                    repaint();
+		            	}
 	            	}
-	        	}
+	            	else {
+	            		System.out.println("Jumping Velocity " + player.getJUMP_V() + " X Velocity " + player.getX_DIRECTION_V());
+	            	}
+	            }
 	        });
 	
 	        actionMap.put("left", new AbstractAction() {
@@ -291,6 +344,10 @@ public class LevelMaker extends JPanel {
         		physics = new Physics(player, entities);
         		entities.add(player);
         		gameMode = WindowMode.GAME;
+        		YVelocityUp.setVisible(true);
+                YVelocityDown.setVisible(true);
+                XVelocityUp.setVisible(true);
+                XVelocityDown.setVisible(true);
         		run();
         	}
         });
@@ -303,6 +360,10 @@ public class LevelMaker extends JPanel {
         			entities.remove(player);
         		}
         		player = null;
+        		YVelocityUp.setVisible(false);
+                YVelocityDown.setVisible(false);
+                XVelocityUp.setVisible(false);
+                XVelocityDown.setVisible(false);
         	}
         });
     }
@@ -348,7 +409,11 @@ public class LevelMaker extends JPanel {
         } else {            
         	Graphics2D g2d = (Graphics2D) g.create();
             for (Entity entity : entities) {
-                TexturePaint texturePaint = new TexturePaint(entity.getImage(), new Rectangle(entity.getX() + xOffset, entity.getY() + yOffset, entity.getWidth(), entity.getHeight()));
+            	
+            	if (entity.getImage() == null)
+            		System.out.println("null instance of entity : " + entity.getFile() + " image");
+            	
+                TexturePaint texturePaint = new TexturePaint(entity.getImage(), new Rectangle(entity.getX() + xOffset, entity.getY() + yOffset, entity.getImage().getWidth(), entity.getImage().getHeight()));
                 g2d.setPaint(texturePaint);
                 g2d.fillRect(entity.getX() + xOffset, entity.getY() + yOffset, entity.getImage().getWidth(), entity.getImage().getHeight());
             }

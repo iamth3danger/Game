@@ -37,7 +37,6 @@ public class GreenTile extends Moving{
     }
 	 
 	 
-	
 	 public void drop() {
          setVelocityY(getVelocityY() + 3);
          setY(getVelocityY() + getY());

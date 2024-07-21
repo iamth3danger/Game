@@ -4,6 +4,8 @@ import Creature.Goblin;
 import Creature.Mushroom;
 import Creature.Reaper;
 import Creature.Skeleton;
+import Living.Door;
+import Living.FireBall;
 import Tile.GreenTile;
 import Tile.Platform;
 import Tile.RedTile;
@@ -34,6 +36,10 @@ public class EntityFactory {
                 return new FlyingEye(x, y);
             case SKELETON:
                 return new Skeleton(x, y);
+            case DOOR:
+            	return new Door(x, y);
+            case FIREBALL:
+            	return new FireBall(x, y);
             default:
                 throw new IllegalArgumentException("Invalid entity type");
         }
@@ -62,6 +68,8 @@ public class EntityFactory {
                 return new FlyingEye(x, y);
             case "S":
                 return new Skeleton(x, y);
+            case "D":
+            	return new Door(x, y);
             default:
                 throw new IllegalArgumentException("Invalid entity symbol");
         }

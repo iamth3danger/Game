@@ -1,13 +1,12 @@
 package Player;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import Entity.Entity;
-
-import java.io.File;
-import java.io.IOException;
 
 public class Player extends Entity {
 	private final String file = "Idle1.png";
@@ -25,9 +24,19 @@ public class Player extends Entity {
     private BufferedImage[] attackImages;
     private BufferedImage[] attackImagesFlipped;
     private Sword sword;
-    private final int POSITIVE_V = 8;
-    private final int NEGATIVE_V = -8;
-    private PlayerLastMove move = PlayerLastMove.RIGHT;
+    private int POSITIVE_V = 8;
+    private int NEGATIVE_V = -8;
+    private int JUMP_V = -19;
+    private int X_DIRECTION_V = 8;
+    public int getX_DIRECTION_V() {
+		return X_DIRECTION_V;
+	}
+
+	public void setX_DIRECTION_V(int x_DIRECTION_V) {
+		X_DIRECTION_V = x_DIRECTION_V;
+	}
+
+	private PlayerLastMove move = PlayerLastMove.RIGHT;
     private boolean isInCollision = false;
     private int upKeyPressed = 0;
     
@@ -44,7 +53,15 @@ public class Player extends Entity {
         init();
     }
 
-    private void init() {
+    public int getJUMP_V() {
+		return JUMP_V;
+	}
+
+	public void setJUMP_V(int jUMP_V) {
+		JUMP_V = jUMP_V;
+	}
+
+	private void init() {
         WIDTH = 45;
         HEIGHT = 60;
 
@@ -227,20 +244,20 @@ public class Player extends Entity {
     public void jump() {
         upKeyPressed++;
         if (upKeyPressed == 1 && getVelocityY() >= 0 && isInCollision()) {
-            setVelocityY(NEGATIVE_V * 2);
+            setVelocityY(JUMP_V);
         } else {
-            setVelocityY(POSITIVE_V);
+            setVelocityY(JUMP_V);
         }
     }
 
     public void moveLeft() {
         setMove(PlayerLastMove.LEFT);
-        setVelocityX(NEGATIVE_V);
+        setVelocityX(-1 * X_DIRECTION_V);
     }
 
     public void moveRight() {
         setMove(PlayerLastMove.RIGHT);
-        setVelocityX(POSITIVE_V);
+        setVelocityX(X_DIRECTION_V);
     }
 
     public void attack() {
