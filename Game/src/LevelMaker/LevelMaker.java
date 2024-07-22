@@ -430,7 +430,7 @@ public class LevelMaker extends JPanel {
     	        if (!level[i][j].equals("-")) {
     	            int x = j * 32;
     	            int y = i * 32;
-    	            Entity entity = EntityFactory.createEntity(level[i][j], x, y);
+    	            Entity entity = EntityFactory.createEntity(level[i][j], x, y, null);
     	            
     	            entities.add(entity);
     	           

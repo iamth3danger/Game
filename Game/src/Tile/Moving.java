@@ -36,6 +36,10 @@ public abstract class Moving extends Entity{
 	        
 	        setX(getX() + getVelocityX());
 	    }
+	    
+	    public void updatePos() {
+	    	moveEntity();
+	    }
 
 	    public abstract String textSymbol();
 	    	

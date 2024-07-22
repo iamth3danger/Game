@@ -8,8 +8,8 @@ public class Skeleton extends Creature {
 	
 	private int IMAGESIZE;   
 	
-	public Skeleton(int x, int y) {
-        super(x, y);
+	public Skeleton(int x, int y, int[] blockDimensions) {
+        super(x, y, blockDimensions);
         
         fileIdle = "Skeleton/Idle/00_Idlecropped.png";
         fileRun = "Skeleton/Walk/00_Walkcropped.png";

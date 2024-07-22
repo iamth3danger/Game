@@ -14,8 +14,8 @@ public class Goblin extends Creature {
     private String fileAttack;
     private int IMAGESIZE = 8;
     
-    public Goblin(int x, int y) {
-        super(x, y);
+    public Goblin(int x, int y, int[] blockDimensions) {
+        super(x, y, blockDimensions);
         fileIdle = "Goblin/Idle/00_Idle.png";
         fileRun = "Goblin/Run/00_Run.png";
         file = "Goblin/Run/00_Run.png";

@@ -1,5 +1,7 @@
 package Tile;
 
+import java.util.ArrayList;
+
 import Entity.Entity;
 
 public class Block {
@@ -53,4 +55,31 @@ public class Block {
 	public int[] getMinMax() {
 		return minMax;
 	}
+	
+	public static int[] findNearestBlock(ArrayList<Block> blocks, int x) {
+		int [] minMax = new int[2];
+		
+		for(Block block : blocks) {
+			if(x > block.getMinMax()[0] && x < block.getMinMax()[1])
+				minMax = block.getMinMax();
+				
+		}
+		
+		return minMax;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

@@ -18,6 +18,8 @@ public class Tile extends Entity {
     public Tile (Tile tile) {
     	super(tile);
     }
+    
+    
 
     @Override
     public String getFile() {

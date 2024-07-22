@@ -45,7 +45,7 @@ public abstract class Creature extends Entity {
     private long lastAttackTime = 0;
     private boolean isFlying = false;
     private ImageType currentImage;
-    
+    private int[] blockDimensions;
     
     
     public boolean isFlying() {
@@ -58,8 +58,9 @@ public abstract class Creature extends Entity {
 
 	private SideFacing side = SideFacing.RIGHT;
     
-    public Creature(int x, int y) {
+    public Creature(int x, int y, int[] blockDimensions) {
         super(x, y);
+        this.blockDimensions = blockDimensions;
  
     }
 
@@ -184,8 +185,8 @@ public abstract class Creature extends Entity {
 	//    }
 	}
 
-	private void checkBoundaries() {
-	    if (getX() <= startingPositionX - 100 || getX() >= startingPositionX + 100) {
+	protected void checkBoundaries() {
+	    if (getX() <= blockDimensions[0] || getX() >= blockDimensions[1]) {
 	        setVelocityX(-getVelocityX()); 
 	       
 	    }
@@ -226,7 +227,6 @@ public abstract class Creature extends Entity {
 	        }
 	    } else if (getHealth() == 0) {
 	        setCollidable(false);
-	        System.out.println(isCollidable());
 	        currentImage = ImageType.DEATH;
 	        return noHealthAnimation.getCurrentImage();
 	    } else if (getVelocityX() < 0) {
@@ -275,13 +275,14 @@ public abstract class Creature extends Entity {
     public void setHealth(int health) {
     	this.health = health;
     }
-    protected void setDimensions(int width, int height) {
-    	setWidth(width);
-    	setHeight(height);
-    }
+    
     
     public boolean getIsDying() {
     	return isDying;
+    }
+    
+    protected int getStartingPosition() {
+    	return this.startingPositionX;
     }
     
     protected abstract int getHealthImageSize();

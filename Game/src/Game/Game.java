@@ -25,6 +25,7 @@ import Player.Physics;
 import Player.Player;
 import Screen.Screen;
 import Tile.Block;
+import Tile.GreenTile;
 import Tile.Moving;
 import Tile.Platform;
 
@@ -60,6 +61,7 @@ public class Game implements AttackListener {
         physics = new Physics(entities);
         screen.background();
         frame = screen.getFrame();
+        System.out.println(entities.size());
     }
 
     public CurrentLevel getCurrentLevel() {
@@ -77,15 +79,12 @@ public class Game implements AttackListener {
 
        
         while (running) {
+        	
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
-            //creaturesToAdd.clear(); // Clear the list at the beginning of each tick
             while (delta >= 1) {
                physics.update();
-              // mage.update();
-                
-                //flame.update();
                if(currentLevel == CurrentLevel.BOSSLEVEL) {
                		mage.update();
                }
@@ -99,10 +98,6 @@ public class Game implements AttackListener {
                         entities.remove(creature);
                         iterator.remove();
                     }
-                    
-                    
-                    
-                    
                 }
                 
                 for (Iterator<Living> iterator = liveList.iterator(); iterator.hasNext();) {
@@ -112,14 +107,11 @@ public class Game implements AttackListener {
                 			iterator.remove();
                   	}
                 }
-                // Add the new creatures to the main list
-                //creatures.addAll(creaturesToAdd);
-
                 for (Moving move : moves) {
                     move.animate();
+                    if (move instanceof GreenTile)
+                    	move.update();
                 }
-                
-              
                 delta--;
             }
 
@@ -145,8 +137,12 @@ public class Game implements AttackListener {
 
    
 	public void reload() {
-		loadLevel(LevelFactory.levelMaker(getCurrentLevel()));
+		if (getCurrentLevel() != CurrentLevel.BOSSLEVEL)
+			loadLevel(LevelFactory.levelMaker(getCurrentLevel()));
+		else
+			loadLevel2();
 		screen.newLevel(player);
+		System.out.println(entities.size());
 	}
     
     
@@ -167,14 +163,19 @@ public class Game implements AttackListener {
     	    	if(level[i][j].equals("#")) {
     	    		int x = j * 32;
     	            int y = i * 32;
-    	    		platforms.add((Platform) EntityFactory.createEntity(level[i][j], x, y));
-    	    		if(level[i][j+1].equals("-")) {
-    	    			blocks.add(new Block((Platform[]) platforms.toArray()));
-    	    			platforms.clear();
-    	    		}
+    	    		platforms.add((Platform) EntityFactory.createEntity(level[i][j], x, y, null));
+    	    	}
+    	    	else if (level[i][j].equals("-") && !platforms.isEmpty()) {
+    	            blocks.add(new Block(platforms.toArray(new Platform[0])));
+    	            platforms.clear();
     	    	}
     	    		
     	    }
+    	    
+    	    if (!platforms.isEmpty()) {
+    	        blocks.add(new Block(platforms.toArray(new Platform[0])));
+    	    }
+    	    
     	}
     	
     	
@@ -183,7 +184,14 @@ public class Game implements AttackListener {
     	        if (!level[i][j].equals("-")) {
     	            int x = j * 32;
     	            int y = i * 32;
-    	            Entity entity = EntityFactory.createEntity(level[i][j], x, y);
+    	            int[] blockDimensions = null;
+    	            String[] creatureStrings = {"M", "R", "G", "E", "S"};
+    	            for (String str : creatureStrings)
+    	            	if(level[i][j].equals(str))
+    	            		blockDimensions = Block.findNearestBlock(blocks, x);
+    	            
+    	            
+    	            Entity entity = EntityFactory.createEntity(level[i][j], x, y, blockDimensions);
     	            
     	            
     	            if (entity instanceof Reaper) {
@@ -202,10 +210,8 @@ public class Game implements AttackListener {
     	            if (entity instanceof Moving) {
     	            	moves.add((Moving) entity);
     	            }
-    	            // Check if the width of the entity is 16
     	            if (entity.getWidth() == 16) {
-    	                // Create another entity 16 units to the right
-    	                Entity secondEntity = EntityFactory.createEntity(level[i][j], x + 16, y);
+    	                Entity secondEntity = EntityFactory.createEntity(level[i][j], x + 16, y, null);
     	                entities.add(secondEntity);
     	                
     	                if (secondEntity instanceof Moving) {

@@ -6,6 +6,8 @@ import Game.Game;
 public class GreenTile extends Moving{
 
  protected int startingPositionX;
+ private boolean startDrop = false;
+ private long dropStartTime;
  
  private final String file = "Tiles/Tile7.png";
     private BufferedImage image = null;
@@ -38,7 +40,14 @@ public class GreenTile extends Moving{
 	 
 	 
 	 public void drop() {
-         setVelocityY(getVelocityY() + 3);
-         setY(getVelocityY() + getY());
+		 if (!startDrop) {
+			 dropStartTime = System.currentTimeMillis();
+		 }
+		
+		 if (System.currentTimeMillis() - dropStartTime > 250) {
+	         setVelocityY(getVelocityY() + 3);
+	         setY(getVelocityY() + getY());
+		 }
+		 startDrop = true;
 	 }
 }

@@ -324,8 +324,8 @@ public class ImageResizer {
     	//ImageResizer.cropImage(filename);
     	
     	int width = 80; // replace with your desired width
-        String filename = "DeathBringer/Walk/00_Walk.png"; // replace with your file name
-        cropImageX(filename);
+        String filename = "Sprites/Fall/00_Fall.png"; // replace with your file name
+        cropImage(filename);
 
 
      

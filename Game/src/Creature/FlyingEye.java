@@ -13,8 +13,8 @@ public class FlyingEye extends Creature{
 	
 	private int IMAGESIZE;   
 	
-	public FlyingEye(int x, int y) {
-        super(x, y);
+	public FlyingEye(int x, int y, int[] blockDimensions) {
+        super(x, y, blockDimensions);
         
         fileIdle = "Flying eye/Flight/00_Flight.png";
         fileRun = "Flying eye/Flight/00_Flight.png";
@@ -85,6 +85,11 @@ public class FlyingEye extends Creature{
 		return getX();
 	}
 	
-	
+	@Override
+	protected void checkBoundaries() {
+	    if (getX() <= getStartingPosition() - 100|| getX() >= getStartingPosition() + 100) {
+	        setVelocityX(-getVelocityX());    
+	    }
+	}
 
 }

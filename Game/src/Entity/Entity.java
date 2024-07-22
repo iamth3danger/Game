@@ -44,17 +44,10 @@ public abstract class Entity {
     	entity.imageChecker();
     }
     
-    public Entity getEntity(String entityType, int x, int y) {
-        switch (entityType) {
-            case "Platform":
-                return new Platform(x, y);
-            case "Spike":
-                return new Spike(x, y);
-            case "Tile":
-                return new Tile(x, y);
-            default:
-                throw new IllegalArgumentException("Invalid entity type");
-        }
+   
+    
+    public void update() {
+    	moveEntity();
     }
     
     public Rectangle getBounds() {
@@ -116,6 +109,11 @@ public abstract class Entity {
 	
 	public void setHeight(int height) {
 		HEIGHT = height;
+	}
+	
+	protected void setDimensions(int width, int height) {
+		setWidth(width);
+		setHeight(height);
 	}
 
 	public void setVelocity(int x, int y) {

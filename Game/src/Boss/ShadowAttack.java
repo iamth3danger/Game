@@ -18,15 +18,11 @@ public class ShadowAttack extends Attack{
 	    		shadow = new Shadow(200, 538);
 	    		getListener().onLivingCreated(shadow);
 	    		shadowMade = true;
-	    		if (shadow.getAnimation() == null) {
-	    			System.out.println("null");
-	    		}
 	    	}
 	    	
 	    	if(shadow != null) {
 	    		shadow.update();
 	    		if(shadow.getAnimation().atLastIndex()) {
-	    			System.out.println("ooop");
 	    			shadow.light();
 	    			shadow = null;
 	    			getMage().updateTime();

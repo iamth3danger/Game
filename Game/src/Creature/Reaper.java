@@ -9,8 +9,8 @@ public class Reaper extends Creature {
     private int IMAGESIZE;
 
 
-    public Reaper(int x, int y) {
-        super(x, y);
+    public Reaper(int x, int y, int[] blockDimensions) {
+        super(x, y, blockDimensions);
         //WIDTH = 54; // Set width to 54 pixels
         //HEIGHT = 54; // Set height to 54 pixels
 

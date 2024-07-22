@@ -19,6 +19,7 @@ public class FireBall extends Living {
         centerY = getY();
         initialX = x;
         initialY = y;
+        setDimensions(32, 32);
         super.init();
         createTime = System.currentTimeMillis();
     }

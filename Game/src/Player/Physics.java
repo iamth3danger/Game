@@ -2,13 +2,16 @@ package Player;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
+import Boss.Mage;
 import Creature.Creature;
 import Creature.Mushroom;
 import Creature.Reaper;
 import DataStructures.Grid;
 import Entity.Entity;
 import Living.Door;
+import Living.FireBall;
 import Living.Lightning;
+import Living.Living;
 import Tile.GreenTile;
 import Tile.Platform;
 import Tile.RedTile;
@@ -28,6 +31,7 @@ public class Physics {
     private boolean gameOver = false;
     private boolean inDoor = false;
     private boolean nextLevel = false;
+    private long invinsibilityClock;
     
     private Grid grid;
     
@@ -160,64 +164,83 @@ public class Physics {
     	return false;
     }
     
+    private void setCollidable() {
+    	invinsibilityClock = System.currentTimeMillis();
+    	player.setCollidable(false);
+    }
     
     public void update() {
+    	//System.out.println(entities.size());
         gravity();
         player.updateSword();
         // Update player position
         int newX = player.getX() + player.getVelocityX();
         int newY = player.getY() + player.getVelocityY();
         
+        if(!player.isCollidable()) {
+        	if(System.currentTimeMillis() - invinsibilityClock >= 1000) {
+        		player.setCollidable(true);
+        		player.noLongerHurt();
+        	}
+        }
 
         player.setInCollision(collision());
-        // Check for collisions with platforms
+
         for (Entity entity : entities) {
+
             if (player.getSword() != null) {
                 if ((entity instanceof Creature) && player.getSword().isCollidingWith(entity) && entity.isCollidable()) {
-                    //System.out.println("yea!");
-                    Creature creature = (Creature) entity;
+
+                	Creature creature = (Creature) entity;
                     creature.setHealth(0);
                 }
-                
-                if (entity instanceof Lightning) {
-                	System.out.println("lightlight");
+                if ((entity instanceof Mage) && player.getSword().isCollidingWith(entity) && entity.isCollidable()) {
+
+                	Mage mage = (Mage) entity;
+                	if(!mage.isHurt())
+                		mage.takeHit();
                 }
+                
             }
-            if (!(entity instanceof Player) && player.isCollidingWith(entity)) {
-                // Handle the collision
-                isOnSomething = true;
+            if (!(entity instanceof Player) && player.isCollidingWith(entity) && entity.isCollidable() ) {
+            	
+
+            	isOnSomething = true;
                 
                 if(entity instanceof Door) {
                 	inDoor = true;
                 	continue;
                 }
+                
+                if(!player.isOnTopOf(entity) && player.isCollidable()) {
+                	if(entity instanceof Creature || entity instanceof Living) {
+                		player.takeHit();
+                		setCollidable();
+                	}
+                }
 
-                // Check if player is on top of entity
-                if (player.isOnTopOf(entity)) {
-                    // Don't move the player vertically
-                    newY = entity.getY() - player.getHeight();
+                if (player.isOnTopOf(entity) && !(entity instanceof Living || entity instanceof Mage)) {
+
+                	newY = entity.getY() - player.getHeight();
                     if (entity instanceof GreenTile) {
                     	GreenTile tile = (GreenTile) entity;
                     	tile.drop();
                     }
+                    
+                    if (entity instanceof Creature) {
+                    	Creature creature = (Creature) entity;
+                    	player.jump();
+                    	creature.setHealth(0);
+                    }
                 }
-
-                // Check if player is right of entity
-                else if (player.isRightOf(entity)) {
-                    //System.out.println("Right!");
+                else if (player.isRightOf(entity) && !(entity instanceof Living || entity instanceof Mage)) {
                     newX = entity.getX() + entity.getWidth();
                 }
-
-                // Check if player is left of entity
-                else if (player.isLeftOf(entity)) {
-                    //System.out.println("Left!");
+                else if (player.isLeftOf(entity) && !(entity instanceof Living || entity instanceof Mage)) {
                     newX = entity.getX() - player.getWidth() + entity.getVelocityX();
                    
                 }
-
-                // Check if player is under entity
-                else if (player.isUnder(entity)) {
-                   // System.out.println("Under!");
+                else if (player.isUnder(entity) && !(entity instanceof Living || entity instanceof Mage)) {
                     newY = entity.getY() + player.getHeight();
                 }
             }
@@ -231,7 +254,7 @@ public class Physics {
         player.setX(newX);
         player.setY(newY);
 
-        if (player.getY() > 579) {
+        if (player.getY() > 579 || player.getHealth() == 0) {
 //            System.out.println(player.getVelocityY());
 //            System.out.println(player.isInCollision());
             gameOver = true;

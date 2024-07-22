@@ -16,8 +16,8 @@ public class Mushroom extends Creature{
 	private int IMAGESIZE;   
 	
 	
-	public Mushroom(int x, int y) {
-        super(x, y);
+	public Mushroom(int x, int y, int[] blockDimensions) {
+        super(x, y, blockDimensions);
         
         fileIdle = "Mushroom/Run/00_Run.png";
         fileRun = "Mushroom/Run/00_Run.png";

@@ -144,7 +144,7 @@ public class Screen {
             }
         });
         
-        panel.setBackground(new Color(0, 0, 0)); // #B92FC7
+        panel.setBackground(new Color(0, 0, 0));
         frame.add(panel);
     }
 
@@ -193,9 +193,7 @@ public class Screen {
                 //TexturePaint texturePaint = new TexturePaint(entity.getImage(), new Rectangle(entity.getX(), entity.getY(), entity.getImage().getWidth(), entity.getImage().getHeight()));
                 //g2d.setPaint(texturePaint);
                 //g2d.fillRect(entity.getX(), entity.getY(), entity.getImage().getWidth(), entity.getImage().getHeight());
-                if (entity instanceof Player || entity instanceof Platform) {
-                	g2d.drawRect(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
-                }
+               
                
                 	g2d.drawImage(entity.getImage(), entity.getX(), entity.getY(), entity.getImage().getWidth(), entity.getImage().getHeight(), null);
             }

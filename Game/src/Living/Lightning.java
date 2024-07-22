@@ -1,9 +1,13 @@
 package Living;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Lightning extends Living{
 	private String animationFile;
 	private int originalX;
 	private int originalY;
+	
 	
 	public Lightning(int x, int y) {
 		super(x, y);
@@ -22,8 +26,11 @@ public class Lightning extends Living{
 	}
 
 	public void update() {
-		if(getAnimation().getCurrentIndex() < 10) {
-			//int multiplier = 4 - getAnimation().getCurrentIndex();
+
+		int index = getAnimation().getCurrentIndex();
+		setDimensions((int) 45, (int) 144);
+		
+		if(index < 10) {
 			setY(originalY - 8 * getHeight());
 		}
 		else setY(originalY);

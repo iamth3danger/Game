@@ -13,7 +13,9 @@ public class Mage extends Entity {
     private AttackListener listener;
     private long createTime;
     private long movementTimer;
-   
+    private int health = 3;
+    private boolean isHurt;
+    private long hitClock;
 	private boolean onLeftSide = true;
     private int leftPoint = 200;
     private int rightPoint = 600;
@@ -21,7 +23,7 @@ public class Mage extends Entity {
     private int centerY = getY();
     private int radius = 25;
     private double angle = 0;
-    
+    private BufferedImage hitImage;
     private AttackType currentAttack;
     private AttackType[] attackList = {AttackType.LIGHTNING, AttackType.SHADOW, AttackType.FIREBALL, AttackType.SPARK};
    
@@ -33,8 +35,9 @@ public class Mage extends Entity {
         super(x, y);
         this.listener = listener;
         this.animationFile = "Boss/Mage/Stage1/mageStage1/00_mageStage1.png";
-        setWidth(40);
-        setHeight(40);
+        hitImage = ImageLoader.loadImage("Hit/HitFrame.png");
+        setWidth(85);
+        setHeight(95);
         init();
         this.player = player;
         
@@ -55,6 +58,11 @@ public class Mage extends Entity {
     }
 
     public void update() {
+    	 if(isHurt) {
+         	if(System.currentTimeMillis() - hitClock >= 1000) {
+         		isHurt = false;
+         	}
+         }
 
     	changeSideFacing();
     	
@@ -174,6 +182,9 @@ public class Mage extends Entity {
 		else {
 			currentImage = animationFlipped.getCurrentImage();
 		}
+		
+		if(isHurt && animation.getCurrentIndex() % 2 == 0)
+			currentImage = hitImage;
 		return currentImage;
 	}
 	
@@ -194,7 +205,22 @@ public class Mage extends Entity {
 		  return center;
 		}
 
-
+	 public void takeHit() {
+	    	isHurt = true;
+	    	hitClock = System.currentTimeMillis();
+	    	health--;
+	    	System.out.println(health);
+	    	
+	    }
+	 
+	 public boolean isHurt() {
+	    	return isHurt;
+	    }
+	    
+	    public void noLongerHurt() {
+	    	isHurt = false;
+	    }
+	
 	public int getRadius() {
 		return radius;
 	}

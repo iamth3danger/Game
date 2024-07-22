@@ -56,17 +56,7 @@ public class SparkSweepAttack extends Attack{
 					spark.moveEntity();
 			}
 			
-			if (current == sparks.length) {
-				//System.out.println(current);
-				//this.completeAttack();
-				for (int i = 0; i < sparks.length; i++) {
-					//sparks[i].ground();
-					if(sparks[i] == null)
-						System.out.println(i);
-					//sparks[i] = null;
-
-				}
-			}
+			
 		}
 		sweepMovement();
 	}
@@ -90,21 +80,17 @@ public class SparkSweepAttack extends Attack{
 			if ((angle > Math.PI / 3 && left
 				||(angle < (2 * Math.PI) / 3 && !left))
 				) {
-				
-				
-				//System.out.println(angle);
-
 
 				double newX = sweepCenterX + majorAxis * Math.cos(1 *angle);
 				double newY = sweepCenterY + minorAxis * Math.sin(1 * angle);
 				double angleDelta = left ? -.01 : .01;
 				mage.setX((int) newX);
 				mage.setY((int) newY);
-	
-
 				angle += angleDelta;
+				
 			}
 			else {
+				mage.setCenterX();
 				currentMovement = MovementState.UPWARD;
 			}
 			break;
