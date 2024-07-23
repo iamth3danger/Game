@@ -52,6 +52,11 @@ The reason that I did this was to be able to test the height of the jumps in rea
 
 
 ![](https://github.com/iamth3danger/Game/blob/master/GIFs/Boss.gif)
+
+
+
+
+
 This was particularly hard to design because of the attacks and movement. The boss moves around with a parametric equation (r * cos(5 * pi * t), r * sin(7 * pi * t)) . I did this to attempt to give the Boss a more natural movement than a normal circle or oval.
 There are multiple attacks that the Mage casts randomly. They take the Living Objects and used them in the Attack class. These classes animate the class. For example, for the FireBalls, the FireBallAttack makes 12 fireballs and moves them in a circular pattern for 
 two seconds until it stops spinning and expands in all directions. The SparkSweepAttack takes two different spark balls and alternates them and moves down in an ellipse to attack the player and also giving the player an opportunity to strike.
