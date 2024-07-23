@@ -21,6 +21,9 @@ I used the Factory Pattern to make an EntityFactory that makes an Entity at the 
 
 
 
+
+
+
 The way that the level was designed was through a Level Designer that I made. It would print out an object that you chose to the screen and then you can save it to a text file when it's done. The Level Designer can also be used to edit levels. 
 In the LevelMaker.java file you change the levelFile variable to whatever textfile you would like to access. To use LevelMaker.java, You pressed the arrow keys to move around the level, click or click and drag to add entities, right click or right click and drag
 to remove entities, M for menu to access the available entities to print, Escape to pull up the save screen, P to acess the Player Mode, And E to access Edit Mode.
@@ -32,6 +35,11 @@ to remove entities, M for menu to access the available entities to print, Escape
 
 
 ![](https://github.com/iamth3danger/Game/blob/master/GIFs/LevelMakerPlayer.gif)
+
+
+
+
+
 Player Mode allows the user to play through the level as a player. It has the same controls as the game. There are arrow buttons on the top of the screen. The up and down arrows control the y velocity and the left and right arrows control the x velocity. 
 The reason that I did this was to be able to test the height of the jumps in real time. This was to make sure that the level didn't have any impossible jumps to make. If there is a hard jump or some other obstacle, you can go into Edit mode to change the level.
 
