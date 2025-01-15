@@ -212,7 +212,7 @@ public class Physics {
                 	continue;
                 }
                 
-                if(!player.isOnTopOf(entity) && player.isCollidable()) {
+                if(!player.isOnTopOf(entity) && player.isCollidable() && player.getSword() != null) {
                 	if(entity instanceof Creature || entity instanceof Living) {
                 		player.takeHit();
                 		setCollidable();

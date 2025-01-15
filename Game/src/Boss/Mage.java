@@ -209,7 +209,6 @@ public class Mage extends Entity {
 	    	isHurt = true;
 	    	hitClock = System.currentTimeMillis();
 	    	health--;
-	    	System.out.println(health);
 	    	
 	    }
 	 
@@ -225,5 +224,11 @@ public class Mage extends Entity {
 		return radius;
 	}
 
+	public boolean isDead() {
+		if (health <= 0)
+			return true;
+		
+		return false;
+	}
 	
 }

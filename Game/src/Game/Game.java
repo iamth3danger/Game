@@ -61,7 +61,6 @@ public class Game implements AttackListener {
         physics = new Physics(entities);
         screen.background();
         frame = screen.getFrame();
-        System.out.println(entities.size());
     }
 
     public CurrentLevel getCurrentLevel() {
