@@ -1,6 +1,6 @@
 In this project, I made a 2d side scroller called KnightOut. I thought that it would be fun to make a video game. This game contains a level and a boss level. The entire project contains features like a level designer and a lot of image handling.
 # How to use
-Download the Game.jar file and make sure you have java installed. Go to the directory that the jar is installed in the terminal and write java -jar Game.jar
+Download the Game folder and make sure you have java installed. Go to the directory that the folder is installed in the terminal and write  cd Game/Game and then java -jar Game.jar
 
 
 # How it works
